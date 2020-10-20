@@ -1,0 +1,270 @@
+#include <iostream>
+#include <stdexcept>
+#include "CppUnitTest.h"
+#include "/Users/Ksenia/Desktop/Study/2020 3 сем/АиСтрД/Lab1/Lab_Lists/ConsoleApplication1/LinkedList.h"
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+namespace UnitTest1
+{
+	TEST_CLASS(UnitTest1)
+	{
+	public:
+		LinkedList* first = NULL;
+		LinkedList* second = NULL;
+
+		TEST_METHOD_INITIALIZE(setup)
+		{
+			first = new LinkedList;
+		}
+
+		TEST_METHOD_CLEANUP(cleanup)
+		{
+			delete first;
+		}
+
+		//--------------------------------------//
+		TEST_METHOD(push_back_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+
+			Assert::AreEqual(first->at(0), 0);
+			Assert::AreEqual(first->at(1), 1);
+			Assert::AreEqual(first->at(2), 2);
+			Assert::AreEqual(first->get_size(), (size_t) 3);
+		}
+
+		TEST_METHOD(push_front_test)
+		{
+			first->push_front(0);
+			first->push_front(1);
+			first->push_front(2);
+
+			Assert::AreEqual(first->at(0), 2);
+			Assert::AreEqual(first->at(1), 1);
+			Assert::AreEqual(first->at(2), 0);
+			Assert::AreEqual(first->get_size(), (size_t)3);
+		}
+
+		TEST_METHOD(pop_back_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+
+			first->pop_back();
+
+			Assert::AreEqual(first->get_size(), (size_t)2);
+
+			try
+			{
+				(first->at(2));
+			}
+			catch (std::out_of_range e)
+			{
+				Assert::AreEqual("Index is greater than list size", e.what());
+			}
+		}
+
+		TEST_METHOD(pop_front_test)
+		{
+			first->push_back(1);
+			first->push_back(2);
+			first->push_back(3);
+
+			first->pop_front();
+
+			Assert::AreEqual(first->get_size(), (size_t)2);
+			Assert::AreEqual(first->at(0), 2);
+		}
+
+		TEST_METHOD(insert_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+
+			first->insert(12345, 1);
+
+			Assert::AreEqual(first->get_size(), (size_t)4);
+			Assert::AreEqual(first->at(3), 2);
+		}
+
+		TEST_METHOD(at_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+
+			Assert::AreEqual(first->at(0), 0);
+			Assert::AreEqual(first->at(2), 2);
+		}
+
+		TEST_METHOD(remove_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+			first->push_back(3);
+
+			first->remove(2);
+
+			Assert::AreEqual(first->get_size(), (size_t)3);
+			Assert::AreEqual(first->at(0), 0);
+		}
+
+		TEST_METHOD(get_size_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+
+			Assert::AreEqual(first->get_size(), (size_t)3);
+		}
+
+		TEST_METHOD(set_test)
+		{
+			first->push_back(1);
+
+			first->set(12345, 0);
+
+			Assert::AreEqual(first->at(0), 12345);
+		}
+
+		TEST_METHOD(print_to_console)
+		{
+			try
+			{
+				first->print_to_console();
+			}
+			catch (std::out_of_range e)
+			{
+				Assert::AreEqual("The list is empty!", e.what());
+			}
+		}
+
+		TEST_METHOD(clean_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+
+			first->clean();
+
+			Assert::AreEqual(first->get_size(), (size_t)0);
+		}
+
+		TEST_METHOD(clean_test_2)
+		{
+			try {
+				first->clean();
+			}
+			catch (std::out_of_range e) {
+				Assert::AreEqual("The list is empty!", e.what());
+			}
+		}
+
+		TEST_METHOD(isempty_test)
+		{
+			first->push_back(1);
+			first->push_back(2);
+			first->push_back(3);
+
+			Assert::AreEqual(first->isempty(), false);
+		}
+
+		TEST_METHOD(cleaning_test)
+		{
+			first->push_back(0);
+			first->push_back(1);
+			first->push_back(2);
+
+			first->cleaning();
+
+			Assert::AreEqual(first->isempty(), true);
+		}
+
+		TEST_METHOD(find_last_test_1)
+		{
+			second = new LinkedList;
+
+			first->push_back(1);
+			first->push_back(2);
+			first->push_back(3);
+			first->push_back(4);
+			first->push_back(5);
+			
+			second->push_back(2);
+			second->push_back(3);
+
+			Assert::AreEqual(first->find_last(*first, *second), (size_t)1);
+		}
+
+		TEST_METHOD(find_last_test_2)
+		{
+			second = new LinkedList;
+			size_t index;
+
+			first->push_back(1);
+			first->push_back(2);
+			first->push_back(3);
+			first->push_back(4);
+			first->push_back(5);
+
+			second->push_back(100);
+
+			try
+			{
+				index = first->find_last(*first, *second);
+			}
+			catch (const char* exeption)
+			{
+				Assert::AreEqual("These lists have no concurrence", exeption);
+			}
+		}
+
+		TEST_METHOD(find_last_test_3)
+		{
+			second = new LinkedList;
+			size_t index;
+
+			first->push_back(1);
+			first->push_back(2);
+
+			second->push_back(3);
+			second->push_back(4);
+			second->push_back(5);
+
+			try
+			{
+				index = first->find_last(*first, *second);
+			}
+			catch (const char* exeption)
+			{
+				Assert::AreEqual("The original list is smaller than second list!", exeption);
+			}
+		}
+
+		TEST_METHOD(find_last_test_4)
+		{
+			second = new LinkedList;
+			size_t index;
+
+			second->push_back(3);
+			second->push_back(4);
+			second->push_back(5);
+
+			try
+			{
+				index = first->find_last(*first, *second);
+			}
+			catch (const char* exeption)
+			{
+				Assert::AreEqual("The original list is empty!", exeption);
+			}
+		}
+	};
+}
+
