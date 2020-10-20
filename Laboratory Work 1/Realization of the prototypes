@@ -1,0 +1,262 @@
+#include <stdexcept>
+#include <string>
+#include "LinkedList.h"
+#include <iostream>
+
+using namespace std;
+
+void LinkedList::cleaning()
+{
+	head = nullptr;
+	tail = nullptr;
+}
+
+LinkedList::LinkedList()
+{
+	cleaning();
+	size = 0;
+}
+
+void LinkedList::add_first(int newElem)
+{
+	head = new Node(newElem);
+	tail = head;
+}
+
+bool LinkedList::isempty()
+{
+	bool emptiness = false;				//flag that checks if the list is empty
+	if (head == NULL)
+		emptiness = true;
+	return emptiness;
+}
+
+void LinkedList::clean()
+{
+	if (!isempty())
+	{
+		while (!isempty())
+			pop_back();
+
+		if (isempty())
+			cout << "List cleared! " << endl;
+	}
+	else
+		throw out_of_range("The list is empty!");
+}
+
+size_t LinkedList::get_size() const
+{
+	return size;
+}
+
+void LinkedList::push_back(int newElem)
+{
+	if (size == 0) {
+		add_first(newElem);
+	}
+	else {
+		tail->next = new Node(newElem);
+		tail = tail->next;
+	}
+	size++;
+}
+
+void LinkedList::push_front(int newElem)
+{
+	if (size == 0) {
+		add_first(newElem);
+	}
+	else {
+		head = new Node(newElem, head);
+	}
+	size++;
+
+}
+
+void LinkedList::pop_back()
+{
+	if (size == 0) return;
+
+	if (size == 1) {
+		delete head;
+		cleaning();
+	}
+	else {
+		Node* current = head;				//pointer to the current information field
+		while (current->next != tail) {
+			current = current->next;
+		}
+		current->next = nullptr;
+		delete tail;
+		tail = current;
+	}
+	size--;
+}
+
+void LinkedList::pop_front()
+{
+	if (size == 0) return;
+
+	if (size == 1) {
+		delete head;
+		cleaning();
+	}
+	else {
+		Node* current = head;				//pointer to the current information field
+		head = current->next;
+		delete current;
+	}
+	size--;
+}
+
+int LinkedList::at(size_t index)
+{
+	if (index >= size) {
+		throw out_of_range("Index is greater than list size");
+	}
+	else {
+		size_t counter = 0;					//counter of the index
+		Node* current = head;				//pointer to the current information field
+		while (counter != index) {
+			current = current->next;
+			counter++;
+		}
+		return current->data;
+	}
+}
+
+void LinkedList::insert(int data, size_t index)
+{
+	size_t counter = 0;						//counter of the index
+	Node* current = head;					//pointer to the current information field
+	Node* added;							//pointer to the adding element
+	if (index >= size) {
+		throw out_of_range("Index is greater than list size");
+	}
+	else
+	{
+		if (index == 0)
+			push_front(data);
+		else {
+			while (counter != index - 1) {
+				current = current->next;
+				counter++;
+			}
+			added = new Node(data, current->next);
+			current->next = added;
+		}
+		size++;
+	}
+}
+
+void LinkedList::remove(size_t index)
+{
+	size_t counter = 0;						//counter of the index
+	Node* current = head;					//pointer to the current information field
+	Node* del = current->next;				//pointer to the deleting element
+
+	if (index >= size) {
+		throw out_of_range("Index is greater than list size");
+	}
+	else
+	{
+		if (index == 0)
+			pop_front();
+		else if (index == size - 1)
+			pop_back();
+		else {
+			while (counter != index - 1) {
+				current = current->next;
+				counter++;
+			}
+			current->next = del->next;
+			delete del;
+		}
+		size--;
+	}
+}
+
+void LinkedList::set(int new_data, size_t index)
+{
+	size_t counter = 0;						//counter of the index
+	Node* current = head;					//pointer to the current information field
+	if (index >= size) {
+		throw out_of_range("Index is greater than list size");
+	}
+	else
+	{
+		while (counter != index) {
+			current = current->next;
+			counter++;
+		}
+		current->data = new_data;
+	}
+}
+
+size_t LinkedList::find_last(LinkedList lst, LinkedList lst2)
+{
+	Node* elem1 = lst.head;						//pointer to the current information field in the original list
+	Node* elem2 = lst2.head;					//pointer to the current information field in the second list
+	size_t id = numeric_limits<size_t>::max(),	//index of the last entering
+		i, j;									//the loop parameters
+	bool flag = false;							//the helping flag
+
+	if (!lst.isempty())
+	{
+		if (lst.get_size() >= lst2.get_size())
+		{
+			for (i = 0; i < lst.get_size() - 1; i++)
+			{
+				if (elem1->data == elem2->data)
+				{
+					flag = true;
+					do
+					{
+						elem1 = elem1->next;
+						elem2 = elem2->next;
+						if ((elem1 != NULL) && (elem2 != NULL) && (elem1->data != elem2->data))
+							flag = false;
+						else if ((elem1 == NULL) && (elem2 != NULL))
+							flag = false;
+					} while ((flag == true) && (elem1 != NULL) && (elem2 != NULL));
+
+					if (flag == false)
+					{
+						elem1 = lst.head;
+						for (j = 0; j < i; j++)
+						{
+							elem1 = elem1->next;
+						}
+						elem1 = elem1->next;
+						elem2 = lst2.head;
+					}
+					else
+					{
+						id = i;
+						i += lst2.get_size() - 1;
+						elem2 = lst2.head;
+					}
+				}
+				else elem1 = elem1->next;
+			}
+			if ((flag == false) && (id == numeric_limits<size_t>::max()))
+				throw "These lists have no concurrence";
+			else
+				return id;
+		}
+		else throw "The original list is smaller than second list!";
+	}
+	else throw "The original list is empty!";
+}
+
+void LinkedList::print_to_console()
+{
+	Node* current = head;					//pointer to the current information field
+	while (current) {
+		int temp = current->data;
+		current = current->next;
+		cout << temp << ' ';
+	}
+	cout << endl;
+}
