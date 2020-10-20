@@ -1,0 +1,72 @@
+#pragma once
+
+class LinkedList
+{
+private:
+
+	//Function that creates the list
+	void add_first(int newElem);
+
+	class Node
+	{
+	public:
+		Node(int data, Node* next = nullptr) {
+			this->data = data;
+			this->next = next;
+		};
+		~Node() {};
+
+		int data;							//information field of the list item 
+		Node* next;							//pointer to the next item in the list
+	};
+
+	Node* head;								//the "head" of the list -- the first one
+	Node* tail;								//the last element of the list
+	size_t size;							//the size of the list
+
+public:
+
+	LinkedList();
+
+	//Adding to the end of the list
+	void push_back(int newElem);
+
+	//Adding to the beginning of the list
+	void push_front(int newElem);
+
+	//Remove the last item
+	void pop_back();
+
+	//Removing the first element
+	void pop_front();
+
+	//Adding element by index (insert in front of an element that was previously accessible at this index)
+	void insert(int, size_t);
+	
+	//Getting an element by index
+	int at(size_t index);
+
+	//Deleting an element by index
+	void remove(size_t index);
+
+	//Getting list size
+	size_t get_size() const;
+
+	//Output of list items to the console through a separator
+	void print_to_console();
+
+	//Removing all list items
+	void clean();
+
+	//Replacing the element by index with the passed element
+	void set(int new_data, size_t index);
+	
+	//Checking if the list is empty
+	bool isempty();
+
+	//Finding the last occurrence of another list in the list
+	size_t find_last(LinkedList lst, LinkedList lst2);
+
+	//Function that deletes the list
+	void cleaning();
+};
