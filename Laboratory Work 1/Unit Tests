@@ -175,17 +175,6 @@ namespace UnitTest1
 			Assert::AreEqual(first->isempty(), false);
 		}
 
-		TEST_METHOD(cleaning_test)
-		{
-			first->push_back(0);
-			first->push_back(1);
-			first->push_back(2);
-
-			first->cleaning();
-
-			Assert::AreEqual(first->isempty(), true);
-		}
-
 		TEST_METHOD(find_last_test_1)
 		{
 			second = new LinkedList;
