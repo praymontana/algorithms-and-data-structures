@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void LinkedList::cleaning()
+void LinkedList::reset()
 {
 	head = nullptr;
 	tail = nullptr;
@@ -13,7 +13,7 @@ void LinkedList::cleaning()
 
 LinkedList::LinkedList()
 {
-	cleaning();
+	reset();
 	size = 0;
 }
 
@@ -80,7 +80,7 @@ void LinkedList::pop_back()
 
 	if (size == 1) {
 		delete head;
-		cleaning();
+		reset();
 	}
 	else {
 		Node* current = head;				//pointer to the current information field
@@ -100,7 +100,7 @@ void LinkedList::pop_front()
 
 	if (size == 1) {
 		delete head;
-		cleaning();
+		reset();
 	}
 	else {
 		Node* current = head;				//pointer to the current information field
