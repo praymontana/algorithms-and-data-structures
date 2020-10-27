@@ -4,8 +4,11 @@ class LinkedList
 {
 private:
 
-	//Function that creates the list
+	//Function that adds the first element
 	void add_first(int newElem);
+
+	//Function that assigns values of head and tail
+	void reset();
 
 	class Node
 	{
@@ -66,7 +69,4 @@ public:
 
 	//Finding the last occurrence of another list in the list
 	size_t find_last(LinkedList lst, LinkedList lst2);
-
-	//Function that deletes the list
-	void cleaning();
 };
