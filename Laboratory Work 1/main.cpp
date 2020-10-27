@@ -181,22 +181,26 @@ int main() {
 			break;
 
 		case (11):
-			cout << "Enter the value of the element: \n";
-			cin >> data;
-			cout << "Enter the ID fron 0 to " << lst.get_size() - 1 << ": \n";
-			cin >> index;
-			try {
-				lst.set(data, index);
+			if (!lst.isempty()) {
+				cout << "Enter the value of the element: \n";
+				cin >> data;
+				cout << "Enter the ID fron 0 to " << lst.get_size() - 1 << ": \n";
+				cin >> index;
+				try {
+					lst.set(data, index);
+				}
+				catch (out_of_range e) {
+					cerr << e.what() << endl;
+					do
+					{
+						cout << "try again: ";
+						cin >> index;
+					} while (index >= lst.get_size());
+				}
+				cout << "Successfully! \n";
 			}
-			catch (out_of_range e) {
-				cerr << e.what() << endl;
-				do
-				{
-					cout << "try again: ";
-					cin >> index;
-				} while (index >= lst.get_size());
-			}
-			cout << "Successfully! \n";
+			else
+				cerr << "The list is empty! Fill it first." << endl;
 
 			system("pause");
 			system("cls");
@@ -233,7 +237,6 @@ int main() {
 
 		case(13):
 			cout << "See you!" << endl;
-			lst.cleaning();
 			break;
 			
 		default:
@@ -245,3 +248,4 @@ int main() {
 
 	return 0;
 }
+
