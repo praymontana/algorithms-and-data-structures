@@ -145,8 +145,8 @@ void LinkedList::insert(int data, size_t index)
 			}
 			added = new Node(data, current->next);
 			current->next = added;
+			size++;
 		}
-		size++;
 	}
 }
 
@@ -172,8 +172,8 @@ void LinkedList::remove(size_t index)
 			}
 			current->next = del->next;
 			delete del;
+			size--;
 		}
-		size--;
 	}
 }
 
