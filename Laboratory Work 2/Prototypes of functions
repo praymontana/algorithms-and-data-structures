@@ -1,0 +1,44 @@
+#pragma once
+
+#include <iostream>
+#include <ctime>
+
+// Insertion sort
+void insertSort(int array[], size_t size);
+
+// Bogo sort
+void bogoSort(int array[], size_t size);
+
+// Binary search of the value of the element
+size_t binarySearch(int* array, int num, size_t left, size_t right);
+
+// Counting sort for char elements
+void countingSort(char array_c[], int size);
+
+// Quick sort
+void QuickSort(int array[], size_t left, size_t right);
+
+// Function that swaps two elements
+void swap(int* first, int* second);
+
+template <class T>
+// Function that checks if the array is sorted
+bool isSorted(T array[], int size)
+{
+    bool flag = true;                                // Flag that returns if the array is sorted or not
+
+    while (--size >= 1)
+    {
+        if (flag)
+        {
+            if (array[size] > array[size - 1])
+                flag = true;
+            else
+                flag = false;
+        }
+    }
+    return flag;
+}
+
+// Results of the time counting written in the Excel file to draw graphics
+void print_to_file(clock_t result, size_t size);
