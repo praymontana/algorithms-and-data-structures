@@ -1,0 +1,142 @@
+#include "Prototypes.h"
+#include <iostream>
+#include <limits>
+#include <stdexcept>
+#include <cstdlib>
+#include <fstream>
+#include <ctime>
+
+using namespace std;
+
+
+void insertSort(int array[], size_t size)
+{
+    int place;                                      // The element that will be placed in the new cell
+    size_t i, j;                                    // Loop parameters
+
+    for (i = 0; i < size; i++) {  
+        place = array[i];
+
+        for (j = i - 1; j >= 0 && array[j] > place; j--)
+            array[j + 1] = array[j];      
+
+        array[j + 1] = place;
+    }
+}
+
+void swap(int* first, int* second)
+{
+    int temp;                                
+
+    temp = *first;
+    *first = *second;
+    *second = temp;
+}
+
+void bogoSort(int array[], size_t size)
+{
+    while (!isSorted(array, 5))
+        for (int i = 0; i < size; i++)
+            swap(&array[i], &array[rand() % size]);
+}
+
+size_t binarySearch(int* array, int num, size_t left, size_t right)
+{
+    size_t middle;                                  // The middle index of the array
+
+    if (isSorted(array, 10))
+    {
+        middle = (left + right) / 2;
+        if (num > array[middle])
+            binarySearch(array, num, middle + 1, right);
+        else if (num < array[middle])
+            binarySearch(array, num, left, middle - 1);
+        else
+            return middle;
+    }
+    else
+        throw out_of_range("Wait... The list isn't sorted! Please sort it first.");
+}
+
+void countingSort(char array_c[], int size)
+{
+    size_t* count = NULL;                           // Auxiliary array for sorting the original one
+    int max;                                        // The maximal value of the array
+    size_t i, j;                                    // Loop parameters
+
+    max = array_c[0];
+    for (i = 1; i < size; i++)
+        if (array_c[i] > max) max = array_c[i];
+
+    count = new size_t[max + 1];
+    for (i = 0; i < max + 1; i++)
+        count[i] = 0;
+
+    for (i = 0; i < size; i++)
+        count[array_c[i]] = count[array_c[i]] + 1;
+
+    j = 0;
+    for (i = 0; i < size; i++)
+    {
+        if (count[j] != 0)
+        {
+            array_c[i] = j;
+            --count[j];
+        }
+        else
+        {
+            ++j;
+            --i;
+        }
+    }
+}
+
+void QuickSort(int array[], size_t left, size_t right)
+{
+    int pivot;									    // Auxiliary element of the array (there - the last one)
+    size_t counter,								    // Auxiliary counter of the elements that less than pivot
+        i, j;								        // Loop parameters
+    bool flag;									    // Flag to detect the need of checking the array 
+
+    pivot = array[right];
+    flag = true;
+    counter = 0;
+    for (i = left; ((i < right) && (flag)); i++)
+    {
+        if (array[i] > pivot)
+        {
+            flag = false;
+            for (j = i + 1; j < right; j++)
+            {
+                if (array[j] < pivot)
+                {
+                    flag = true;
+                    swap(&array[j], &array[i]);
+                    j = right;
+                }
+            }
+        }
+        else counter++;
+    }
+    if ((counter == (right - left)) && (counter != 0))
+        QuickSort(array, left, right - 1);
+    else if (left != right)
+    {
+        swap(&array[right], &array[i - 1]);
+        QuickSort(array, i, right);
+        QuickSort(array, left, i - 1);
+    }
+}
+
+void time_check(clock_t result, size_t size)
+{
+    ofstream file_csv;							//File with the csv extension, into which we will write the result
+
+    file_csv.open("result.csv", ios_base::out | ios_base::app);
+    if (file_csv.is_open())
+    {
+        file_csv << result << ";" << size << endl;
+        file_csv.close();
+    }
+    else throw out_of_range("Unable to open file");
+}
