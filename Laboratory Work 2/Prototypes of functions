@@ -41,4 +41,4 @@ bool isSorted(T array[], int size)
 }
 
 // Results of the time counting written in the Excel file to draw graphics
-void print_to_file(clock_t result, size_t size);
+void time_check(clock_t result, size_t size);
