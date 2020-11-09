@@ -1,0 +1,127 @@
+#include "Prototypes.h"
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+
+using namespace std;
+
+int main()
+{
+    int array[10] = { };                            // Static massive with int elements
+    char array_c[10] = { };                         // Static massive with char elements
+    size_t size,                                    // Size of the massive
+        index,                                      // Index of the massive's element
+        i, j,                                       // Loop parameters
+        ans;                                        // User's choice
+
+    srand((unsigned int)time(NULL));
+
+    size = sizeof(array) / sizeof(array[0]);
+    cout << "Your int data: \n";
+    for (i = 0; i < size; i++)
+    {
+        array[i] = rand() % std::numeric_limits<int>::max();
+        cout << array[i] << " ";                    // Generating values of massive's elements
+    }
+    cout << "\nYour char data: \n";
+    for (i = 0; i < size; i++)
+    {
+        array_c[i] = rand() % std::numeric_limits<char>::max();
+        cout << array_c[i] << " ";                  // Generating values of massive's elements
+    }
+    cout << endl;
+
+    do
+    {
+        cout << "Choose your option: \n";
+        cout << "1) Insertion Sort \n";
+        cout << "2) Bogo Sort \n";
+        cout << "3) Counting Sort \n";
+        cout << "4) Quick Sort \n";
+        cout << "5) Binary Search \n";
+        cout << "6) Close the program \n";
+        cin >> ans;
+
+        switch (ans)
+        {
+        case(1):
+            cout << "\n \nNow let's sort this massive using Insertion sort! \n";
+            insertSort(array, size);
+
+            for (i = 0; i < size; i++)
+                cout << array[i] << " ";
+
+            system("pause");
+            system("cls");
+            break;
+
+        case(2):
+            cout << "\n \nNow let's sort this massive using Bogo sort! \n";
+            bogoSort(array, 5);                     // We use only 5 elements 'cause this method works very-very slow
+
+            for (i = 0; i < 5; i++)
+                cout << array[i] << " ";
+
+            system("pause");
+            system("cls");
+            break;
+
+        case(3):
+            cout << "\n \nNow let's sort this massive using Counting sort! \n";
+            countingSort(array_c, size);
+
+            for (i = 0; i < size; i++)
+                cout << array_c[i] << " ";
+
+            system("pause");
+            system("cls");
+            break;
+
+        case(4):
+            cout << "\n \nNow let's sort this massive using Quick sort! \n";
+            QuickSort(array, 0, size - 1);
+
+            for (i = 0; i < size; i++)
+                cout << array[i] << " ";
+
+            system("pause");
+            system("cls");
+            break;
+
+        case(5):
+            try {
+                cout << "\nChoose the index from 0 to 9:" << endl;
+                do
+                {
+                    cin >> index;
+                } while ((index < 0) && (index > size-1));
+
+                index = binarySearch(array, array[index], 0, size - 1);
+                cout << "\nSearched element: " << array[index] << endl;
+            }
+            catch (out_of_range e)
+            {
+                cerr << e.what() << endl;
+            }
+            system("pause");
+            system("cls");
+            break;
+
+        case(6):
+            cout << "See you!\n";
+
+            system("pause");
+            system("cls");
+            break;
+
+        default:
+            cout << "Incorrect input. Try again";
+
+            system("pause");
+            system("cls");
+            break;
+        }
+    } while (ans != 6);
+
+    return 0;
+}
