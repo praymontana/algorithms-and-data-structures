@@ -13,10 +13,10 @@ void bogoSort(int array[], size_t size);
 size_t binarySearch(int* array, int num, size_t left, size_t right);
 
 // Counting sort for char elements
-void countingSort(char array_c[], int size);
+void countingSort(char array_c[], size_t size);
 
 // Quick sort
-void QuickSort(int array[], size_t left, size_t right);
+void quickSort(int array[], size_t left, size_t right);
 
 // Function that swaps two elements
 void swap(int* first, int* second);
