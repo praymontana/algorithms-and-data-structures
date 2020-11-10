@@ -58,9 +58,9 @@ size_t binarySearch(int* array, int num, size_t left, size_t right)
         throw out_of_range("Wait... The list isn't sorted! Please sort it first.");
 }
 
-void countingSort(char array_c[], int size)
+void countingSort(char array_c[], size_t size)
 {
-    size_t* count = NULL;                           // Auxiliary array for sorting the original one
+    int* count = NULL;                              // Auxiliary array for sorting the original one
     int max;                                        // The maximal value of the array
     size_t i, j;                                    // Loop parameters
 
@@ -68,7 +68,7 @@ void countingSort(char array_c[], int size)
     for (i = 1; i < size; i++)
         if (array_c[i] > max) max = array_c[i];
 
-    count = new size_t[max + 1];
+    count = new int[max + 1];
     for (i = 0; i < max + 1; i++)
         count[i] = 0;
 
@@ -91,7 +91,7 @@ void countingSort(char array_c[], int size)
     }
 }
 
-void QuickSort(int array[], size_t left, size_t right)
+void quickSort(int array[], size_t left, size_t right)
 {
     int pivot;									    // Auxiliary element of the array (there - the last one)
     size_t counter,								    // Auxiliary counter of the elements that less than pivot
@@ -119,18 +119,18 @@ void QuickSort(int array[], size_t left, size_t right)
         else counter++;
     }
     if ((counter == (right - left)) && (counter != 0))
-        QuickSort(array, left, right - 1);
+        quickSort(array, left, right - 1);
     else if (left != right)
     {
         swap(&array[right], &array[i - 1]);
-        QuickSort(array, i, right);
-        QuickSort(array, left, i - 1);
+        quickSort(array, i, right);
+        quickSort(array, left, i - 1);
     }
 }
 
 void time_check(clock_t result, size_t size)
 {
-    ofstream file_csv;							//File with the csv extension, into which we will write the result
+    ofstream file_csv;							//File with the csv extension
 
     file_csv.open("result.csv", ios_base::out | ios_base::app);
     if (file_csv.is_open())
