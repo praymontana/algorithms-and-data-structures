@@ -1,0 +1,89 @@
+#pragma once
+#include <iostream>
+#include <stdexcept>
+
+class BST
+{
+public:
+    class Node
+    {
+    public:
+        int data;
+        Node* left;
+        Node* right;
+        Node* parent;
+    };
+
+    Node* create(int value, Node* parent);
+
+    void insert(Node** head, int value);
+
+    Node* getmax(Node* root);
+
+    Node* contains(Node* root, int value);
+
+    void remove(Node* target);
+
+    void deleting(Node* root, int value);
+
+    void print_tree(Node* root, const char* dir, int level);
+
+	class Iterator
+	{
+	private:
+	class Stack
+		{
+		private:
+			class Stack_item
+			{
+			public:
+				Stack_item* next;						// Next item in the stack
+				int value;							// Stack item information field
+
+				Stack_item(Stack_item* next_constructor, int value_constructor);
+			};
+
+			Stack_item* top;							
+
+		public:
+			Stack();
+
+			void push(int value);
+
+			int pop();
+
+			bool is_empty();
+		};
+
+		class Queue
+		{
+		private:
+
+			class Queue_item
+			{
+			public:
+				Queue_item* next;						
+				int value;							
+				Queue_item(Queue_item* next_constructor, int value_constructor);
+			};
+
+			Queue_item* begin;							// Beginning of the queue
+			Queue_item* end;							// End of the queue
+
+		public:
+			Queue();
+
+			void push(int value);
+
+			int pop();
+
+			bool is_empty();
+		};
+
+	public:
+
+		int* create_bft_iterator(Node* root, BST* tree, size_t size);
+
+		int* create_dft_iterator(Node* root, BST* tree, size_t size);
+	};
+};
