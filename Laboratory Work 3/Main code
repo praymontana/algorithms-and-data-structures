@@ -117,7 +117,7 @@ int main()
 
         case(6):
             cout << "Your tree:" << endl;
-            tree.printTree(root, "root", 0);
+            tree.print_tree(root, "root", 0);
 
             system("pause");
             system("cls");
