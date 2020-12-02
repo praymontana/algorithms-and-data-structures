@@ -4,14 +4,252 @@
 
 using namespace std;
 
-//--------------------------------------------------
-BST::Node* BST::create(int value, Node* parent) 
+BST::Node::Node(int data, Node* left, Node* right, Node* parent)
+    : data(data), left(left), right(right), parent(parent)
+{}
+
+BST::Stack::Stack()
 {
-    Node* tmp = new Node;
-    tmp->left = tmp->right = NULL;
-    tmp->data = value;
-    tmp->parent = parent;
-    return tmp;
+    top = NULL;
+}
+
+BST::Stack::~Stack()
+{
+    while (top != NULL)
+        pop();
+}
+
+BST::Queue::Queue()
+{
+    begin = NULL;
+    end = NULL;
+}
+
+BST::Queue::~Queue()
+{
+    while (begin != NULL)
+        pop();
+
+    begin = NULL;
+    end = NULL;
+}
+
+BST::dft_iterator::dft_iterator(Node* first)
+{
+    current = first;
+    stack = new Stack;
+
+    stack->push(first);
+}
+
+//Destructor of the DFT_iterator class
+BST::dft_iterator::~dft_iterator()
+{
+    current = NULL;
+    delete stack;
+}
+
+BST::bft_iterator::bft_iterator(Node* first)
+{
+    current = first;
+    queue = new Queue;
+
+    queue->push(first);
+}
+
+BST::bft_iterator::~bft_iterator()
+{
+    current = NULL;
+    delete queue;
+}
+
+BST::Iterator* BST::create_dft_iterator()
+{
+    dft_iterator* iterator;
+
+    if (Root == NULL)
+        throw out_of_range("The tree is empty!");
+
+    iterator = new dft_iterator(Root);
+    return iterator;
+}
+
+bool BST::dft_iterator::has_next()
+{
+    bool flag;									                    // Flag for checking if queue has next element
+
+    if (!stack->is_empty())
+        flag = true;
+    else
+        flag = false;
+
+    return flag;
+}
+
+int BST::dft_iterator::next()
+{
+    int value;									                    // Value of the current item
+
+    if (has_next())
+    {
+        if (current->right != NULL)
+            stack->push(current->right);
+
+        value = current->data;
+
+        if (current->left != NULL)
+            current = current->left;
+        else
+            current = stack->pop();
+
+        return value;
+    }
+}
+
+BST::Iterator* BST::create_bft_iterator()
+{
+    bft_iterator* iterator;
+
+    if (Root == NULL)
+        throw out_of_range("There are no elements in the binary heap!");
+
+    iterator = new bft_iterator(Root);
+    return iterator;
+}
+
+bool BST::bft_iterator::has_next()
+{
+    bool flag;									                    // Flag for checking if queue has next element
+
+    if (!queue->is_empty())
+        flag = true;
+    else
+        flag = false;
+
+    return flag;
+}
+
+int BST::bft_iterator::next()
+{
+    if (has_next())
+    {
+        current = queue->pop();
+        if (current->left != NULL)
+            queue->push(current->left);
+        if (current->right != NULL)
+            queue->push(current->right);
+
+        return current->data;
+    }
+}
+
+BST::Stack::Stack_item::Stack_item(Stack_item* next_constructor, Node* value_constructor)
+{
+    next = next_constructor;
+    value = value_constructor;
+}
+
+
+void BST::Stack::push(Node* value)
+{
+    Stack_item* new_item = NULL;				                    // New item of the list
+
+    // if the stack is empty the new element creates as begin of it
+    if (top == NULL)
+    {
+        top = new Stack_item(NULL, value);
+    }
+    else
+    {
+        new_item = new Stack_item(top, value);
+        top = new_item;
+    }
+}
+
+BST::Node* BST::Stack::pop()
+{
+    Stack_item* deleted;						                    // Excluded stack item
+    Node* value;								                    // Stack item's value
+
+    if (top == NULL)
+        throw out_of_range("The stack is empty.");
+
+    else
+    {
+        value = top->value;
+        deleted = top;
+        top = top->next;
+        delete deleted;
+    }
+
+    return value;
+}
+
+bool BST::Stack::is_empty()
+{
+    bool emptiness;								                    // Flag that checks if the stack is empty
+
+    if (top == NULL)
+        emptiness = true;
+    else
+        emptiness = false;
+
+    return emptiness;
+}
+
+BST::Queue::Queue_item::Queue_item(Queue_item* next_constructor, Node* value_constructor)
+{
+    next = next_constructor;
+    value = value_constructor;
+}
+
+void BST::Queue::push(Node* value)
+{
+    // if the queue is empty the new element creates as begin and end of it
+    if (begin == NULL)
+    {
+        begin = new Queue_item(NULL, value);
+        end = begin;
+    }
+    else
+    {
+        end->next = new Queue_item(NULL, value);
+        if (end->next == NULL)
+            throw out_of_range("Memory not allocated.");
+        else
+            end = end->next;
+    }
+}
+
+BST::Node* BST::Queue::pop()
+{
+    Queue_item* deleted;						                    // Excluded queue item
+    Node* value;									                // Queue item's value
+
+    if (begin == NULL)
+        throw out_of_range("The queue is empty.");
+
+    else
+    {
+        value = begin->value;
+        deleted = begin;
+        begin = begin->next;
+        delete deleted;
+    }
+
+    return value;
+}
+
+bool BST::Queue::is_empty()
+{
+    bool answer;								                    // Flag that checks if the queue is empty
+
+    if (begin == NULL)
+        answer = true;
+    else
+        answer = false;
+
+    return answer;
 }
 
 void BST::insert(Node** head, int value) 
@@ -20,7 +258,8 @@ void BST::insert(Node** head, int value)
     
     // If the tree is empty, we should use function that creates it
     if (*head == NULL) {
-        *head = create(value, NULL);
+        *head = new Node(value, NULL, NULL, NULL);
+        Root = *head;
         return;
     }
 
@@ -36,7 +275,7 @@ void BST::insert(Node** head, int value)
 
             // If it is
             else {
-                tmp->right = create(value, tmp);
+                tmp->right = new Node(value, NULL, NULL, tmp);
                 return;
             }
         }
@@ -45,7 +284,7 @@ void BST::insert(Node** head, int value)
                 tmp = tmp->left;
             }
             else {
-                tmp->left = create(value, tmp);
+                tmp->left = new Node(value, NULL, NULL, tmp);
                 return;
             }
         }
@@ -86,15 +325,20 @@ BST::Node* BST::contains(Node* root, int value)
     return NULL;
 }
 
-void BST::remove(Node* heir) 
+void BST::remove(Node* root, int value)
 {
+    // Finding the needed element
+    Node* heir = contains(root, value);
+    if (heir == NULL)
+        throw out_of_range("Your value doesn't exist in the tree!");
+
     // If the node has both heirs
     if (heir->left && heir->right)
     {
         // Finding the local minimum in the left subtree and replace the deleting node with it 
         Node* localMin = getmax(heir->right);
         heir->data = localMin->data;
-        remove(localMin);
+        remove(localMin, heir->data);
         return;
     }
     // If the node has only left heir
@@ -129,17 +373,6 @@ void BST::remove(Node* heir)
     free(heir);
 }
 
-void BST::deleting(Node* root, int value) 
-{
-    // Finding the needed element
-    Node* heir = contains(root, value);
-    if (heir == NULL)
-        throw out_of_range("Your value doesn't exist in the tree!");
-
-    // Removing it
-    remove(heir);
-}
-
 void BST::print_tree(Node* root, const char* dir, int level) 
 {
     if (root) 
@@ -148,193 +381,4 @@ void BST::print_tree(Node* root, const char* dir, int level)
         print_tree(root->left, "left", level + 1);
         print_tree(root->right, "right", level + 1);
     }
-}
-
-BST::Iterator::Stack::Stack_item::Stack_item(Stack_item* next_constructor, int value_constructor)
-{
-    next = next_constructor;
-    value = value_constructor;
-}
-
-BST::Iterator::Stack::Stack()
-{
-    top = NULL;
-}
-
-void BST::Iterator::Stack::push(int value)
-{
-	Stack_item* new_item = NULL;				            // New item of the list;
-
-    // if the stack is empty the new element creates as begin of it
-	if (top == NULL)
-	{
-		top = new Stack_item(NULL, value);
-		if (top == NULL)
-			throw out_of_range("Memory not allocated.");
-	}
-	else
-	{
-		new_item = new Stack_item(top, value);
-		if (new_item == NULL)
-			throw out_of_range("Memory not allocated.");
-        else
-    		top = new_item;
-	}
-}
-
-int BST::Iterator::Stack::pop()
-{
-	Stack_item* deleted;						// Excluded stack item
-	int value;									// Stack item value
-
-	if (top == NULL)
-		throw out_of_range("The stack is empty.");
-
-    else 
-    {
-        value = top->value;
-        deleted = top;
-        top = top->next;
-        delete deleted;
-    }
-
-	return value;
-}
-
-bool BST::Iterator::Stack::is_empty()
-{
-	bool emptiness;								// Flag that checks if the list is empty
-
-	if (top == NULL)
-        emptiness = true;
-	else
-        emptiness = false;
-
-	return emptiness;
-}
-
-BST::Iterator::Queue::Queue_item::Queue_item(Queue_item* next_constructor, int value_constructor)
-{
-    next = next_constructor;
-    value = value_constructor;
-}
-
-BST::Iterator::Queue::Queue()
-{
-    begin = NULL;
-    end = NULL;
-}
-
-void BST::Iterator::Queue::push(int value)
-{
-    // if the queue is empty the new element creates as begin and end of it
-	if (begin == NULL)
-	{
-		begin = new Queue_item(NULL, value);
-		if (begin == NULL)
-			throw out_of_range("Memory not allocated.");
-        else
-    		end = begin;
-	}
-	else
-	{
-		end->next = new Queue_item(NULL, value);
-		if (end->next == NULL)
-			throw out_of_range("Memory not allocated.");
-        else
-    		end = end->next;
-	}
-}
-
-int BST::Iterator::Queue::pop()
-{
-	Queue_item* deleted;						// Excluded queue item
-	int value;									// Queue item value
-
-	if (begin == NULL)
-		throw out_of_range("The queue is empty.");
-
-    else
-    {
-        value = begin->value;
-        deleted = begin;
-        begin = begin->next;
-        delete deleted;
-    }
-
-	return value;
-}
-
-bool BST::Iterator::Queue::is_empty()
-{
-	bool answer;								// The program's response about the empty list
-
-	if (begin == NULL)
-		answer = true;
-	else
-		answer = false;
-
-	return answer;
-}
-
-int* BST::Iterator::create_bft_iterator(BST::Node* root, BST* tree, size_t size) 
-{
-    Queue* queue = new Queue;                               // Queue for BFT
-    int value;                                              // Value of the thee's node
-    Node* node;                                             // The tree's node
-    int* result = new int[size];                            // Resulting array
-    size_t i = 0;                                           // Loop parameter
-
-    queue->push(root->data);
-    while (!queue->is_empty())
-    {
-        value = queue->pop();
-        result[i++] = value;
-        node = tree->contains(root, value);
-
-        if (node->left != NULL)
-            queue->push(node->left->data);
-        if (node->right != NULL)
-            queue->push(node->right->data);
-    }
-
-    // Destructor of queue
-    delete queue;
-
-    return result;
-}
-
-int* BST::Iterator::create_dft_iterator(BST::Node* root, BST* tree, size_t size)
-{
-    Stack* stack = new Stack;
-    int value;
-    Node* node;
-    int* result = new int[size];
-    size_t i = 0;
-
-    node = root;
-    stack->push(node->data);
-
-    while (!stack->is_empty())
-    {
-        result[i++] = node->data;
-
-        if (node->right != NULL)
-            stack->push(node->right->data);
-
-        if (node->left != NULL) 
-        {
-            node = node->left;
-        }
-        else
-        {
-            value = stack->pop();
-            node = tree->contains(root, value);
-        }
-    }
-
-    // Destructor for stack
-    delete stack;
-
-    return result;
 }
