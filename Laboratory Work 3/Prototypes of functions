@@ -1,89 +1,156 @@
-#pragma once
+#pragma once 
 #include <iostream>
 #include <stdexcept>
 
 class BST
 {
 public:
-    class Node
-    {
-    public:
-        int data;
-        Node* left;
-        Node* right;
-        Node* parent;
-    };
+	class Node
+	{
+	public:
+		int data;											// Value of the tree's node
+		Node* left;											// Pointer to the left node of the tree
+		Node* right;										// Pointer to the right node of the tree
+		Node* parent;										// Pointer to the parent node of the tree			
 
-    Node* create(int value, Node* parent);
+		friend class Stack;
+		friend class Queue;
 
-    void insert(Node** head, int value);
+		// Constructor for tree's node
+		Node(int data, Node* left, Node* right, Node* parent);
+	};
 
-    Node* getmax(Node* root);
+	Node* Root;												// Root of the tree
 
-    Node* contains(Node* root, int value);
+	// Adding an element to the tree by key
+	void insert(Node** head, int value);
 
-    void remove(Node* target);
+	// Getting maximal element 
+	Node* getmax(Node* root);
 
-    void deleting(Node* root, int value);
+	// Searching for an element in the tree by key
+	Node* contains(Node* root, int value);
 
-    void print_tree(Node* root, const char* dir, int level);
+	// Deleting a tree element by key
+	void remove(Node* root, int value);
+
+	// Printing the tree
+	void print_tree(Node* root, const char* dir, int level);
 
 	class Iterator
 	{
-	private:
+	public:
+		virtual int next() = 0;
+		virtual bool has_next() = 0;
+	};
+
 	class Stack
+	{
+	private:
+		class Stack_item
 		{
-		private:
-			class Stack_item
-			{
-			public:
-				Stack_item* next;						// Next item in the stack
-				int value;							// Stack item information field
-
-				Stack_item(Stack_item* next_constructor, int value_constructor);
-			};
-
-			Stack_item* top;							
-
 		public:
-			Stack();
+			Stack_item* next;							// The next item in our stack
+			Node* value;								// Stack item's value
 
-			void push(int value);
-
-			int pop();
-
-			bool is_empty();
+			// Constructor fot stack's item
+			Stack_item(Stack_item* next_constructor, Node* value_constructor);
 		};
-
-		class Queue
-		{
-		private:
-
-			class Queue_item
-			{
-			public:
-				Queue_item* next;						
-				int value;							
-				Queue_item(Queue_item* next_constructor, int value_constructor);
-			};
-
-			Queue_item* begin;							// Beginning of the queue
-			Queue_item* end;							// End of the queue
-
-		public:
-			Queue();
-
-			void push(int value);
-
-			int pop();
-
-			bool is_empty();
-		};
+		
+		Stack_item* top;								// The first stack's item 
 
 	public:
 
-		int* create_bft_iterator(Node* root, BST* tree, size_t size);
+		// Constructor and destructoe for stack
+		Stack();
+		~Stack();
 
-		int* create_dft_iterator(Node* root, BST* tree, size_t size);
+		// Adding a new element in the stack
+		void push(Node* value);
+
+		// Deleting element from the stack
+		Node* pop();
+
+		// Checking if the stack is empty
+		bool is_empty();
+
+		friend class dft_iterator;
 	};
+
+	class dft_iterator : public Iterator
+	{
+	private:
+		Stack* stack;						// Stack for elements of the tree
+		Node* current;						// Current item
+	public:
+
+		// Constructor and destructor for dft_iterator
+		dft_iterator(Node* first);
+		~dft_iterator();
+
+		// Checking if it has next element
+		bool has_next() override;
+
+		// If it is, moving to it
+		int next() override;
+	};
+
+	class Queue
+	{
+	private:
+
+		class Queue_item
+		{
+		public:
+			Queue_item* next;								// The next item in our queue
+			Node* value;									// Stack item's value
+
+			// Constructor for queue's item
+			Queue_item(Queue_item* next_constructor, Node* value_constructor);
+		};
+
+		Queue_item* begin;									// First item of the queue
+		Queue_item* end;									// Last item of the queue
+
+	public:
+
+		// Constructor and destructor for the queue
+		Queue();
+		~Queue();
+
+		// Adding a new element in the queue
+		void push(Node* value);
+
+		// Deleting element from the queue
+		Node* pop();
+
+		// Checking if the queue is empty
+		bool is_empty();
+
+		friend class bft_iterator;
+	};
+
+	class bft_iterator : public Iterator
+	{
+	private:
+		Queue* queue;						// Queue for elements of the tree
+		Node* current;						// Current item
+	public:
+		 
+		// Constructor and destructor for bft_iterator 
+		bft_iterator(Node* first);
+		~bft_iterator();
+
+		// Checking if it has next element
+		bool has_next() override;
+
+		// If it is, moving to ot
+		int next() override;
+	};
+	
+	// Creating an iterator that implements one of the depth-first traversal methods (There -- Pre-order)
+	Iterator* create_dft_iterator();
+	
+	// Creating an iterator that implements breadth-first traversal methods
+	Iterator* create_bft_iterator();
 };
