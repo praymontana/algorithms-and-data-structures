@@ -5,28 +5,26 @@ using namespace std;
 int main()
 {
     BST tree;
-    BST::Iterator iterator;
-    BST::Node* root = NULL;                                 // Pointer of the root
-    int* result;                                            // Result of Pre-order or Breadth-first search
+    BST::Node* node = NULL;                                 // Pointer of the current node
+    BST::Iterator* result;                                  // Result of Pre-order or Breadth-first search
     int key;                                                // Key for finding, inserting and removing
-    size_t i,                                               // Loop parameter
-        size,                                               // Size of the tree            
+    size_t size,                                            // Size of the tree            
         ans;                                                // User's choice
 
     // Filling the tree from the root. Root is the first value, then the left leaf, the right leaf and their heirs in the same way
-    tree.insert(&root, 8);
-    tree.insert(&root, 3);
-    tree.insert(&root, 10);
-    tree.insert(&root, 1);
-    tree.insert(&root, 6);
-    tree.insert(&root, 14);
-    tree.insert(&root, 4);
-    tree.insert(&root, 7);
+    tree.insert(&node, 8);
+    tree.insert(&node, 3);
+    tree.insert(&node, 10);
+    tree.insert(&node, 1);
+    tree.insert(&node, 6);
+    tree.insert(&node, 14);
+    tree.insert(&node, 4);
+    tree.insert(&node, 7);
     
     size = 8;
 
     cout << "Default tree" << endl;
-    tree.printTree(root, "root", 0);
+    tree.print_tree(node, "root", 0);
 
     cout << endl;
 
@@ -60,10 +58,10 @@ int main()
         case(2):
             cout << "Enter the value you want to add: \n";
             cin >> key;
-            try 
+            try
             {
-                tree.insert(&root, key);
-                cout << "Successfully!";
+                tree.insert(&node, key);
+                cout << "Successfully! \n";
                 size++;
             }
             catch (out_of_range e)
@@ -80,8 +78,8 @@ int main()
             cin >> key;
             try
             {
-                tree.deleting(root, key);
-                cout << "Successfully!";
+                tree.remove(node, key);
+                cout << "Successfully! \n";
                 size--;
             }
             catch (out_of_range e)
@@ -94,30 +92,46 @@ int main()
             break;
 
         case(4):
-            cout << "Pre-order: " << endl;
-            result = iterator.create_dft_iterator(root, &tree, size);
+            try 
+            {
+                cout << "Pre-order: " << endl;
+                result = tree.create_dft_iterator();
 
-            for (i = 0; i < size; i++)
-                cout << result[i] << " ";
+                while (result->has_next())
+                    cout << result->next() << " ";
 
+                delete result;
+            }
+            catch (out_of_range e)
+            {
+                cerr << e.what() << endl;
+            }
             system("pause");
             system("cls");
             break;
 
         case(5):
-            cout << "Breadth-first search: " << endl;
-            result = iterator.create_bft_iterator(root, &tree, size);
+            try 
+            {
+                cout << "Breadth-first search: " << endl;
+                result = tree.create_bft_iterator();
 
-            for (i = 0; i < size; i++)
-                cout << result[i] << " ";
+                while (result->has_next())
+                    cout << result->next() << " ";
 
+                delete result;
+            }
+            catch (out_of_range e)
+            {
+                cerr << e.what() << endl;
+            }
             system("pause");
             system("cls");
             break;
 
         case(6):
             cout << "Your tree:" << endl;
-            tree.print_tree(root, "root", 0);
+            tree.print_tree(node, "root", 0);
 
             system("pause");
             system("cls");
@@ -142,4 +156,3 @@ int main()
 
     return 0;
 }
-
