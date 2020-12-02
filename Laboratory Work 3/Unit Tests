@@ -1,0 +1,109 @@
+#include <stdexcept>
+#include "CppUnitTest.h"
+#include "C:\Users\Ksenia\Desktop\Study\2020 3 сем\АиСтрД\Lab3\ConsoleApplication1\Tree.h"
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+namespace UnitTest1
+{
+	TEST_CLASS(UnitTest1)
+	{
+	public:
+		BST tree;
+		BST::Node* node = NULL;
+
+		TEST_METHOD(Test_contains1)
+		{
+			tree.insert(&node, 1);
+			tree.insert(&node, 2);
+			tree.insert(&node, 3);
+			tree.insert(&node, 4);
+
+			BST::Node* key = tree.contains(node, 5);
+			Assert::AreEqual((int)key, NULL);
+		}
+		TEST_METHOD(Test_contains2)
+		{
+			tree.insert(&node, 1);
+			tree.insert(&node, 2);
+			tree.insert(&node, 3);
+			tree.insert(&node, 4);
+
+			BST::Node* key = tree.contains(node, 1);
+			Assert::AreNotEqual(NULL, (int)key);
+		}
+		TEST_METHOD(Test_insert)
+		{
+			tree.insert(&node, 1);
+			tree.insert(&node, 2);
+			tree.insert(&node, 3);
+			tree.insert(&node, 4);
+
+			BST::Node* key = tree.contains(node, 1);
+			Assert::AreNotEqual(NULL, (int)key);
+			key = tree.contains(node, 2);
+			Assert::AreNotEqual(NULL, (int)key);
+			key = tree.contains(node, 3);
+			Assert::AreNotEqual(NULL, (int)key);
+			key = tree.contains(node, 4);
+			Assert::AreNotEqual(NULL, (int)key);
+		}
+		TEST_METHOD(Test_remove1)
+		{
+			tree.insert(&node, 1);
+			tree.insert(&node, 2);
+			tree.insert(&node, 3);
+			tree.insert(&node, 4);
+			tree.remove(node, 2);
+
+			BST::Node* key = tree.contains(node, 2);
+			Assert::AreEqual((int)key, NULL);
+		}
+
+		TEST_METHOD(Test_remove2)
+		{
+			tree.insert(&node, 1);
+			tree.insert(&node, 2);
+			tree.insert(&node, 3);
+			tree.insert(&node, 4);
+			
+			try 
+			{
+				tree.remove(node, 5);
+			}
+			catch (std::out_of_range e)
+			{
+				Assert::AreEqual("Your value doesn't exist in the tree!", e.what());
+			}
+		}
+
+		TEST_METHOD(Test_pre)
+		{
+			tree.insert(&node, 4);
+			tree.insert(&node, 5);
+			tree.insert(&node, 3);
+			tree.insert(&node, 1);
+			int size = 4, 
+				i;
+			BST::Iterator* result = tree.create_dft_iterator();
+			int check[4] = { 4, 3, 1, 5 };
+
+			for (i = 0; i < size; i++)
+				Assert::AreEqual(result->next(), check[i]);
+		}
+		TEST_METHOD(Test_bft)
+		{
+			tree.insert(&node, 4);
+			tree.insert(&node, 5);
+			tree.insert(&node, 3);
+			tree.insert(&node, 1);
+			int size = 4,
+				i;
+			BST::Iterator* result = tree.create_bft_iterator();
+			int check[4] = { 4, 3, 5, 1 };
+
+			for (i = 0; i < size; i++)
+				Assert::AreEqual(result->next(), check[i]);
+		}
+	};
+}
