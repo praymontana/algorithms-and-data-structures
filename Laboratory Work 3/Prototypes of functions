@@ -40,8 +40,10 @@ public:
 	class Iterator
 	{
 	public:
-		virtual int next() = 0;
+
 		virtual bool has_next() = 0;
+
+		virtual int next() = 0;
 	};
 
 	class Stack
@@ -80,8 +82,8 @@ public:
 	class dft_iterator : public Iterator
 	{
 	private:
-		Stack* stack;						// Stack for elements of the tree
-		Node* current;						// Current item
+		Stack* stack;												// Stack for elements of the tree
+		Node* current;												// Current item
 	public:
 
 		// Constructor and destructor for dft_iterator
