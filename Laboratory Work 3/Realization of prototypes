@@ -42,7 +42,6 @@ BST::dft_iterator::dft_iterator(Node* first)
     stack->push(first);
 }
 
-//Destructor of the DFT_iterator class
 BST::dft_iterator::~dft_iterator()
 {
     current = NULL;
@@ -65,7 +64,7 @@ BST::bft_iterator::~bft_iterator()
 
 BST::Iterator* BST::create_dft_iterator()
 {
-    dft_iterator* iterator;
+    dft_iterator* iterator;                                         // Traversal iterator address
 
     if (Root == NULL)
         throw out_of_range("The tree is empty!");
@@ -108,7 +107,7 @@ int BST::dft_iterator::next()
 
 BST::Iterator* BST::create_bft_iterator()
 {
-    bft_iterator* iterator;
+    bft_iterator* iterator;                                         // Traversal iterator address
 
     if (Root == NULL)
         throw out_of_range("There are no elements in the binary heap!");
@@ -168,7 +167,7 @@ void BST::Stack::push(Node* value)
 
 BST::Node* BST::Stack::pop()
 {
-    Stack_item* deleted;						                    // Excluded stack item
+    Stack_item* deleting;						                    // The removed stack element
     Node* value;								                    // Stack item's value
 
     if (top == NULL)
@@ -177,9 +176,9 @@ BST::Node* BST::Stack::pop()
     else
     {
         value = top->value;
-        deleted = top;
+        deleting = top;
         top = top->next;
-        delete deleted;
+        delete deleting;
     }
 
     return value;
@@ -223,7 +222,7 @@ void BST::Queue::push(Node* value)
 
 BST::Node* BST::Queue::pop()
 {
-    Queue_item* deleted;						                    // Excluded queue item
+    Queue_item* deleting;						                    // The removed queue element
     Node* value;									                // Queue item's value
 
     if (begin == NULL)
@@ -232,9 +231,9 @@ BST::Node* BST::Queue::pop()
     else
     {
         value = begin->value;
-        deleted = begin;
+        deleting = begin;
         begin = begin->next;
-        delete deleted;
+        delete deleting;
     }
 
     return value;
@@ -327,6 +326,7 @@ BST::Node* BST::contains(Node* root, int value)
 
 void BST::remove(Node* root, int value)
 {
+    Node* localmax;                                                 // Local maximum
     // Finding the needed element
     Node* heir = contains(root, value);
     if (heir == NULL)
@@ -336,9 +336,9 @@ void BST::remove(Node* root, int value)
     if (heir->left && heir->right)
     {
         // Finding the local minimum in the left subtree and replace the deleting node with it 
-        Node* localMin = getmax(heir->right);
-        heir->data = localMin->data;
-        remove(localMin, heir->data);
+        localmax = getmax(heir->right);
+        heir->data = localmax->data;
+        remove(localmax, heir->data);
         return;
     }
     // If the node has only left heir
