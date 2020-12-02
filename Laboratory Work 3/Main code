@@ -7,7 +7,8 @@ int main()
     BST tree;
     BST::Node* node = NULL;                                 // Pointer of the current node
     BST::Iterator* result;                                  // Result of Pre-order or Breadth-first search
-    int key;                                                // Key for finding, inserting and removing
+    int key,                                                  // Key for finding, inserting and removing
+        check;
     size_t size,                                            // Size of the tree            
         ans;                                                // User's choice
 
@@ -22,7 +23,7 @@ int main()
     tree.insert(&node, 7);
     
     size = 8;
-
+    
     cout << "Default tree" << endl;
     tree.print_tree(node, "root", 0);
 
@@ -46,8 +47,9 @@ int main()
             cout << "Enter the value from your tree: \n";
             cin >> key;
 
-            if (key != NULL)
-                cout << "The value " << key << "exisits \n";
+            check = (int)tree.contains(node, key);
+            if (check != NULL)
+                cout << "The value " << key << " exisits \n";
             else
                 cout << "The value doesn't exist \n";
 
