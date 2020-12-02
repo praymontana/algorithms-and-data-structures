@@ -377,7 +377,7 @@ void BST::print_tree(Node* root, const char* dir, int level)
 {
     if (root) 
     {
-        printf("level %d %s = %d\n", level, dir, root->data);
+        cout << "level " << level << " " << dir << " " << root->data << endl;
         print_tree(root->left, "left", level + 1);
         print_tree(root->right, "right", level + 1);
     }
