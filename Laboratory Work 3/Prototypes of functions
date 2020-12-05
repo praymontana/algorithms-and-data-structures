@@ -20,13 +20,8 @@ public:
 		Node(int data, Node* left, Node* right, Node* parent);
 	};
 
-	Node* Root;												// Root of the tree
-
 	// Adding an element to the tree by key
 	void insert(Node** head, int value);
-
-	// Getting maximal element 
-	Node* getmax(Node* root);
 
 	// Searching for an element in the tree by key
 	Node* contains(Node* root, int value);
@@ -155,4 +150,10 @@ public:
 	
 	// Creating an iterator that implements breadth-first traversal methods
 	Iterator* create_bft_iterator();
+
+	private:
+		Node* Root;											// Root of the tree
+
+		// Getting maximal element 
+		Node* getmax(Node* root);
 };
