@@ -1,0 +1,54 @@
+#include <iostream>
+#include <string>
+#include <cmath>
+#include "Prototypes.h" 
+
+using namespace std;
+
+int main()
+{
+	Calc calc;
+	Calc::Queue queue;
+	string sample;
+	size_t ans = 1;
+
+	cout << "Welcome to the postfix calculator!" << endl;
+
+	do
+	{
+		cout << "Enter your algebraic expression: " << endl;
+		cin >> sample;
+		cout << "Your algebraic expression: " << sample << endl;
+
+		try
+		{
+			calc.correct(sample);
+
+			calc.add(sample);
+
+			try
+			{
+				calc.counter();
+			}
+			catch (domain_error e)
+			{
+				cerr << e.what() << endl;
+			}
+		}
+		catch (out_of_range e)
+		{
+			cerr << e.what() << endl;
+		}
+
+		cout << "Your algebraic expression in postfix notation: " << endl;
+		calc.print_queue(sample);
+
+		cout << "\n \nDo you want to continue the work? If not, press '0' " << endl;
+		cin >> ans;
+		system("cls");
+
+	} while (ans != 0);
+	cout << "Goodbye!";
+
+	return 0;
+}
