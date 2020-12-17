@@ -1,0 +1,151 @@
+#pragma once
+#include <iostream>
+#include <stdexcept>
+
+class Calc
+{
+public:
+	bool unary_minus;
+
+	class Stack
+	{
+	private:
+		class Stack_item
+		{
+		public:
+			Stack_item* next;							// The next item in our stack
+			std::string value;								// Stack item's value
+
+			// Constructor fot stack's item
+			Stack_item(Stack_item* next_constructor, std::string value_constructor);
+		};
+
+		class Stack_item_double
+		{
+		public:
+			Stack_item_double* next;							// The next item in our stack
+			double value;
+
+			// Constructor fot stack's item
+			Stack_item_double(Stack_item_double* next_constructor, double value_constructor);
+		};
+
+	public:
+
+		Stack_item* top;								// The first stack's item 
+		Stack_item_double* top_double;
+
+		// Constructor and destructoe for stack
+		Stack();
+		~Stack();
+
+		// Adding a new element in the stack
+		void push(std::string value);
+
+		// Adding a new element in the stack
+		void push(double value);
+
+		// Deleting element from the stack
+		std::string pop();
+
+		// Deleting element from the stack
+		double pop_double();
+
+		std::string peek(Stack* stack);
+
+		// Checking if the stack is empty
+		bool is_empty();
+
+		// Checking if the stack is empty
+		bool is_empty_double();
+	};
+
+	class Queue
+	{
+	private:
+
+		class Queue_item
+		{
+		public:
+			Queue_item* next;								// The next item in our queue
+			std::string value;									// Stack item's value
+
+			// Constructor for queue's item
+			Queue_item(Queue_item* next_constructor, std::string value_constructor);
+		};
+		friend Calc;
+
+		Queue_item* begin;									// First item of the queue
+		Queue_item* end;									// Last item of the queue
+
+	public:
+
+		// Constructor and destructor for the queue
+		Queue();
+		~Queue();
+
+		// Adding a new element in the queue
+		void push(std::string value);
+
+		// Deleting element from the queue
+		std::string pop();
+
+		// Checking if the queue is empty
+		bool is_empty();
+	};
+
+	Queue queue;
+
+	Stack stack;
+
+	void print_queue(std::string result);
+
+	// Adding numbers and operations in the queue
+	void add_item(std::string string, size_t* i);
+
+	// Adding operations in the stack
+	void add_sign(std::string string, size_t i);
+
+	// Checking if the string is correct
+	void correct(std::string string);
+
+	// Function that checks what we should add
+	void add(std::string string);
+
+	// Function that calls counting of the expression
+	void counter();
+
+private:
+	// Checking if the number of brackets is correct
+	bool brackets(std::string string);
+
+	// Checking if the sequence signs is correct 
+	bool sign_check(std::string string);
+
+	// Checking if the node of the string is sign
+	bool is_sign(std::string string, size_t i);
+
+	// Checking if the node of the string is constant, and pushes it onto the queue if it is
+	bool is_constant(std::string string, size_t* i);
+
+	// Checking if the node of the string is function, and pushes it onto the stack if it is
+	bool is_function(std::string string, size_t* i);
+
+	// Checking if the number has correct number of dots (1 or 2)
+	bool dot_check(std::string string);
+
+	// Prioritizing operations
+	size_t priority(std::string sign, size_t index = 0);
+
+	// Converting char to string
+	std::string convert(char value);
+
+	// Function that checks which the operation is
+	double which_is(std::string string);
+
+	// Function that realizes the needed arithmetic operation
+	double which_sign_is(std::string string);
+
+	// Function that realizes the needed arithmetic function
+	double which_function_is(std::string string);
+};
