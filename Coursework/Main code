@@ -9,8 +9,9 @@ int main()
 {
 	Calc calc;
 	Calc::Queue queue;
-	string sample;
-	size_t ans = 1;
+	string sample;													// Entering expression
+	size_t ans = 1;													// User's choice
+	double res;														// Result of counting 
 
 	cout << "Welcome to the postfix calculator!" << endl;
 
@@ -28,7 +29,8 @@ int main()
 
 			try
 			{
-				calc.counter();
+				res = calc.counter();
+				cout << res;
 			}
 			catch (domain_error e)
 			{
@@ -40,7 +42,7 @@ int main()
 			cerr << e.what() << endl;
 		}
 
-		cout << "Your algebraic expression in postfix notation: " << endl;
+		cout << "\nYour algebraic expression in postfix notation: " << endl;
 		calc.print_queue(sample);
 
 		cout << "\n \nDo you want to continue the work? If not, press '0' " << endl;
