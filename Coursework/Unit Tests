@@ -1,0 +1,131 @@
+#define _USE_MATH_DEFINES
+#include "CppUnitTest.h"
+#include <iostream>
+#include <cmath>
+#include "C:\Users\Ksenia\Desktop\Study\2020 3 сем\АиСтрД\Coursework\Prototypes.h"
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+namespace UnitTest1
+{
+	TEST_CLASS(UnitTest1)
+	{
+	public:
+		
+		Calc calc;
+		
+		TEST_METHOD(correct_test1)
+		{
+			std::string expression = "((1+3)+2*(-1)";
+
+			try
+			{
+				calc.correct(expression);
+			}
+			catch (std::out_of_range e)
+			{
+				Assert::AreEqual("There was a problem with count of brackets. Try again. \n", e.what());
+			}
+		}
+
+		TEST_METHOD(correct_test2)
+		{
+			std::string expression = "(1+3)+2**(-1)";
+
+			try
+			{
+				calc.correct(expression);
+			}
+			catch (std::out_of_range e)
+			{
+				Assert::AreEqual("There was a problem with count of arithmetic signs. Try again. \n", e.what());
+			}
+		}
+
+		TEST_METHOD(correct_test3)
+		{
+			std::string expression = "1.05+3.9.94";
+
+			try
+			{
+				calc.correct(expression);
+			}
+			catch (std::out_of_range e)
+			{
+				Assert::AreEqual("There was a problem with count of dots in the number. Try again. \n", e.what());
+			}
+		}
+
+		TEST_METHOD(count_test1)
+		{
+			std::string expression = "69+150*cos(pi)+25^3-9";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+
+			Assert::AreEqual(a, (double)15535);
+		}
+
+		TEST_METHOD(count_test2)
+		{
+			std::string expression = "(sqrt(36)+cos(-pi))/5^2";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+
+			Assert::AreEqual(a, 0.2);
+		}
+
+		TEST_METHOD(count_test3)
+		{
+			std::string expression = "(log(1/10))/5^2";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+
+			Assert::AreEqual(a, -0.04);
+		}
+
+		TEST_METHOD(count_test4)
+		{
+			std::string expression = "((12*5+4)/5*3/4-(4*11+4)/11*(4*8+1)/8)/((11*3+2)/3*7/18)";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+
+			Assert::AreEqual(a = round(a), round(-1.85143));
+		}
+
+		TEST_METHOD(postfix_test1)
+		{
+			std::string expression = "1+2";
+			std::string helper = "";
+			std::string result = "12+";
+			size_t i = 0;
+
+			calc.add(expression);
+
+			while (!calc.queue.is_empty())
+			{
+				helper += calc.queue.pop();
+			}
+			Assert::AreEqual(helper, result);
+		}
+
+		TEST_METHOD(postfix_test2)
+		{
+			std::string expression = "sqrt(1-atan(3x))";
+			std::string helper = "";
+			std::string result = "13atan-sqrt";
+			size_t i = 0;
+
+			calc.add(expression);
+
+			while (!calc.queue.is_empty())
+			{
+				helper += calc.queue.pop();
+			}
+			Assert::AreEqual(helper, result);
+		}
+	};
+}
