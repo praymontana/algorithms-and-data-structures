@@ -52,7 +52,7 @@ Calc::Stack::Stack_item_double::Stack_item_double(Stack_item_double* next_constr
 
 void Calc::Stack::push(string value)
 {
-    Stack_item* new_item = NULL;				                    // New item of the list
+    Stack_item* new_item = NULL;				                    // New item of the stack
 
     // if the stack is empty the new element creates as begin of it
     if (top == NULL)
@@ -68,7 +68,7 @@ void Calc::Stack::push(string value)
 
 void Calc::Stack::push(double value)
 {
-    Stack_item_double* new_item = NULL;				                    // New item of the list
+    Stack_item_double* new_item = NULL;				                    // New item of the stack
 
     // if the stack is empty the new element creates as begin of it
     if (top_double == NULL)
@@ -104,7 +104,7 @@ string Calc::Stack::pop()
 double Calc::Stack::pop_double()
 {
     Stack_item_double* deleting;						                    // The removed stack element
-    double value;								                            // Stack item's value
+    double value;								                    // Stack item's value
 
     if (top_double == NULL)
         throw out_of_range("The stack is empty.");
@@ -206,7 +206,7 @@ bool Calc::Queue::is_empty()
 
 size_t Calc::priority(string sign, size_t index)
 {
-    size_t priority;
+    size_t priority;                                                // Operation's priority
 
     if ((sign[index] == '(') || (sign[index] == ')'))
         priority = 0;
@@ -226,7 +226,7 @@ bool Calc::is_sign(string string, size_t i)
     {
         if ((i == 0) && ((isdigit(string[i + 1])) || ((string[i + 1]) == 'p') || ((string[i + 1]) == 'e')))
             unary_minus = true;
-        else if ((i >= 1) && (string[i - 1] == '(') && ((isdigit(string[i + 1])) || ((string[i + 1])=='p') || ((string[i + 1]) == 'e')))
+        else if ((i >= 1) && (string[i - 1] == '(') && ((isdigit(string[i + 1])) || ((string[i + 1]) == 'p') || ((string[i + 1]) == 'e')))
             unary_minus = true;
     }
     else if ((string[i] == '+') || (string[i] == '*') || (string[i] == '/') || (string[i] == '^'))
@@ -237,12 +237,12 @@ bool Calc::is_sign(string string, size_t i)
 
 bool Calc::is_constant(std::string string, size_t* index)
 {
-    std::string helper[] = { "pi", "e" };
-    std::string copy;
-    bool flag = true;
-    size_t i,
+    std::string helper[] = { "pi", "e" };                              // Needed constants
+    std::string copy;                                                   // Helping string for pushing onto the queue
+    bool flag = true;                                                   // Flag if the value is constant
+    size_t i,                                                           // Loop parameters
         j;
-    size_t kol;
+    size_t kol;                                                         // Number of needed constants
 
     kol = 2;
     for (i = 0; i < kol; i++)
@@ -280,8 +280,8 @@ bool Calc::is_constant(std::string string, size_t* index)
 
 bool Calc::is_function(string string, size_t* index)
 {
-    std::string helper[] = { "sin", "asin", "cos", "acos", "tan", "atan", "cot", "ln", "log", "sqrt" };
-    std::string copy;
+    std::string helper[] = { "sin", "asin", "cos", "acos", "tan", "atan", "cot", "ln", "log", "sqrt" }; // Needed functions
+    std::string copy;                                               // Helping string for pushing onto the queue 
     bool flag = true;
     size_t i,
         j;
@@ -297,7 +297,7 @@ bool Calc::is_function(string string, size_t* index)
             {
                 j = helper[i].length();
                 flag = false;
-            }
+            } 
         }
         if (flag)
         {
@@ -307,18 +307,19 @@ bool Calc::is_function(string string, size_t* index)
                 (*index)++;
             }
 
-            if ((stack.is_empty()) || (stack.top->value == "("))
+            if (stack.is_empty())
             {
                 stack.push(copy);
                 (*index)--;
             }
-
+            // If the incoming operator has a higher priority than top, push it onto the stack
             else if (priority(helper[i], 0) > priority(stack.top->value))
             {
                 stack.push(copy);
                 (*index)--;
             }
-
+            // If the incoming operator has a lower or equal priority than the top, 
+            // pop into the queue until see a lower priority or left bracket at the top, then add the incoming operator onto the stack
             else if (priority(helper[i], 0) <= priority(stack.top->value))
             {
                 do
@@ -347,13 +348,10 @@ void Calc::add_sign(string string, size_t i)
 {
 
     // If the stack is empty or contains a left bracket at the top, then add the incoming operator to the stack
-    if ((stack.is_empty()) || (stack.top->value == "("))
+    if (stack.is_empty())
     {
-        if (is_sign(string, i))
+        if ((is_sign(string, i)) || ((string[i] == '(')))
             stack.push(convert(string[i]));
-        // If the incoming item is a left parenthesis, push it onto the stack
-        else if (string[i] == ')')
-            stack.pop();
     }
     // If the incoming item is a left parenthesis, push it onto the stack
     else if (string[i] == '(')
@@ -361,10 +359,9 @@ void Calc::add_sign(string string, size_t i)
     // If the incoming item is a right bracket, pop the stack and add its items to the queue until you see a left bracket
     else if (string[i] == ')')
     {
-        do
-        {
+        while (stack.peek(&stack) != "(")
             queue.push(stack.pop());
-        } while (stack.peek(&stack) != "(");
+
         // Remove the found bracket from the stack
         stack.pop();
     }
@@ -385,7 +382,7 @@ void Calc::add_sign(string string, size_t i)
 
 void Calc::add_item(string string, size_t* i)
 {
-    std::string helper;
+    std::string helper;                                                 // Helping string for pushing onto the queue
 
     if (unary_minus)
     {
@@ -469,15 +466,14 @@ bool Calc::dot_check(string string)
 void Calc::correct(string string)
 {
     Calc calc;
-    bool flag = true;
 
-    if (flag == !calc.brackets(string))
+    if (!calc.brackets(string))
         throw out_of_range("There was a problem with count of brackets. Try again. \n");
 
-    if (flag == !calc.sign_check(string))
+    if (!calc.sign_check(string))
         throw out_of_range("There was a problem with count of arithmetic signs. Try again. \n");
 
-    if (flag == !calc.dot_check(string))
+    if (!calc.dot_check(string))
         throw out_of_range("There was a problem with count of dots in the number. Try again. \n");
 
     cout << "Your string is correct! \n";
@@ -518,31 +514,23 @@ void Calc::print_queue(std::string result)
 
 double Calc::which_is(string string)
 {
-    double answer;								
+    double answer;								// Value of calculated function
 
     if (string.length() > 1)
         answer = which_function_is(string);
     else
-    {
-        try
-        {
-            answer = which_sign_is(string);
-            return answer;
-        }
-        catch (domain_error e)
-        {
-            cerr << e.what() << endl;
-        }
-    }    
+        answer = which_sign_is(string);
+
+    return answer;
 }
 
 double Calc::which_sign_is(string string)
 {
-    std::string signs[] = { "+", "-", "*", "/", "^" };	            // Arithmetic signs
-    double result;								                    // The result of calculating
-    double value1;								                    // First operand
-    double value2;								                    // Second operand
-    size_t i;									                    // Loop parameter
+    std::string signs[] = { "+", "-", "*", "/", "^" };	// Arithmetic signs
+    double result;								// Value of calculated function
+    double value1;								// First operand
+    double value2;								// Second operand
+    size_t i;									// Loop parameter
 
     i = 0;
     while (signs[i] != string)
@@ -555,19 +543,19 @@ double Calc::which_sign_is(string string)
         value1 = stack.pop_double();
         result = value1 + value2;
         break;
-
+    
     case(1):
         value2 = stack.pop_double();
         value1 = stack.pop_double();
         result = value1 - value2;
         break;
-
+    
     case(2):
         value2 = stack.pop_double();
         value1 = stack.pop_double();
         result = value1 * value2;
         break;
-
+    
     case(3):
         value2 = stack.pop_double();
         value1 = stack.pop_double();
@@ -576,7 +564,7 @@ double Calc::which_sign_is(string string)
         else
             throw domain_error("The expression contains division by zero!");
         break;
-
+    
     case(4):
         value2 = stack.pop_double();
         value1 = stack.pop_double();
@@ -590,9 +578,9 @@ double Calc::which_sign_is(string string)
 double Calc::which_function_is(string string)
 {
     std::string functions[] = { "sin", "asin", "cos", "acos", "tan", "atan", "cot", "ln", "log", "sqrt" };
-    double result;								                    // The result of calculating
-    double value;								                    // Argument of function
-    size_t i;									                    // Loop parameter
+    double result;								// Value of calculated function
+    double value;								// Function argument
+    size_t i;									// Loop parameter
 
     i = 0;
     while (functions[i] != string)
@@ -604,47 +592,47 @@ double Calc::which_function_is(string string)
         value = stack.pop_double();
         result = sin(value);
         break;
-     
+
     case(1):
         value = stack.pop_double();
         result = asin(value);
         break;
-        
+
     case(2):
         value = stack.pop_double();
         result = cos(value);
         break;
-        
+
     case(3):
         value = stack.pop_double();
         result = acos(value);
         break;
-        
+
     case(4):
         value = stack.pop_double();
         result = tan(value);
         break;
-        
+
     case(5):
         value = stack.pop_double();
         result = atan(value);
         break;
-        
+
     case(6):
         value = stack.pop_double();
         result = cos(value) / sin(value);
         break;
-       
+
     case(7):
         value = stack.pop_double();
         result = log(value);
         break;
-        
+
     case(8):
         value = stack.pop_double();
         result = log10(value);
         break;
-        
+
     case(9):
         value = stack.pop_double();
         result = sqrt(value);
@@ -654,10 +642,10 @@ double Calc::which_function_is(string string)
     return result;
 }
 
-void Calc::counter()
+double Calc::counter()
 {
-    Queue::Queue_item* current;                                     // Current data
-    double answer;
+    Queue::Queue_item* current;                                     // Current item
+    double answer;                                                  // The result of counting
 
     answer = 0;
     current = queue.begin;
@@ -665,13 +653,11 @@ void Calc::counter()
     {
         try
         {
-            // push the value onto the stack 
             answer = stod(current->value);
             stack.push(answer);
         }
         catch (invalid_argument)
         {
-            // if the value is constant or constant with unary minus
             if (current->value == "e")
                 stack.push(M_E);
             else if (current->value == "-e")
@@ -680,7 +666,6 @@ void Calc::counter()
                 stack.push(M_PI);
             else if (current->value == "-pi")
                 stack.push(-M_PI);
-            // check which type is the value: operator or function 
             else
             {
                 answer = which_is(current->value);
@@ -693,5 +678,5 @@ void Calc::counter()
     if (!stack.is_empty_double())
         answer = stack.pop_double();
 
-    cout << answer << endl;
+    return answer;
 }
