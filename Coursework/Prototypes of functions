@@ -99,13 +99,7 @@ public:
 	Stack stack;
 
 	void print_queue(std::string result);
-
-	// Adding numbers and operations in the queue
-	void add_item(std::string string, size_t* i);
-
-	// Adding operations in the stack
-	void add_sign(std::string string, size_t i);
-
+	
 	// Checking if the string is correct
 	void correct(std::string string);
 
@@ -113,7 +107,7 @@ public:
 	void add(std::string string);
 
 	// Function that calls counting of the expression
-	void counter();
+	double counter();
 
 private:
 	// Checking if the number of brackets is correct
@@ -121,9 +115,6 @@ private:
 
 	// Checking if the sequence signs is correct 
 	bool sign_check(std::string string);
-
-	// Checking if the node of the string is sign
-	bool is_sign(std::string string, size_t i);
 
 	// Checking if the node of the string is constant, and pushes it onto the queue if it is
 	bool is_constant(std::string string, size_t* i);
@@ -139,6 +130,15 @@ private:
 
 	// Converting char to string
 	std::string convert(char value);
+
+	// Adding numbers and operations in the queue
+	void add_item(std::string string, size_t* i);
+
+	// Checking if the node of the string is sign
+	bool is_sign(std::string string, size_t i);
+
+	// Adding operations in the stack
+	void add_sign(std::string string, size_t i);
 
 	// Function that checks which the operation is
 	double which_is(std::string string);
