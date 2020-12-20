@@ -96,6 +96,46 @@ namespace UnitTest1
 			Assert::AreEqual(a = round(a), round(-1.85143));
 		}
 
+		TEST_METHOD(count_test5)
+		{
+			std::string expression = "atan(1)+(ln(e)/(36*(e/2)))-log(100)";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+
+			Assert::AreEqual(a = round(a), round(-1.19416));
+		}
+
+		TEST_METHOD(count_test6)
+		{
+			std::string expression = "((sin(1)/cos(1))*atan(sqrt(3)))/(pi/3)";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+
+			Assert::AreEqual(a = round(a), round(1.55741));
+		}
+
+		TEST_METHOD(count_test7)
+		{
+			std::string expression = "acos(sqrt(3)/2)-asin(1/2)";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+
+			Assert::AreEqual(a, 0.0);
+		}
+
+		TEST_METHOD(count_test8)
+		{
+			std::string expression = "1/cot(0)";
+			double a;
+			calc.add(expression);
+			a = calc.counter();
+			
+			Assert::AreEqual(a, 0.0);
+		}
+
 		TEST_METHOD(postfix_test1)
 		{
 			std::string expression = "1+2";
@@ -117,6 +157,38 @@ namespace UnitTest1
 			std::string expression = "sqrt(1-atan(3x))";
 			std::string helper = "";
 			std::string result = "13atan-sqrt";
+			size_t i = 0;
+
+			calc.add(expression);
+
+			while (!calc.queue.is_empty())
+			{
+				helper += calc.queue.pop();
+			}
+			Assert::AreEqual(helper, result);
+		}
+
+		TEST_METHOD(postfix_test3)
+		{
+			std::string expression = "atan(1)+(ln(e)/(36*(e/2)))-log(100)";
+			std::string helper = "";
+			std::string result = "1ataneln36e2/*/+100log-";
+			size_t i = 0;
+
+			calc.add(expression);
+
+			while (!calc.queue.is_empty())
+			{
+				helper += calc.queue.pop();
+			}
+			Assert::AreEqual(helper, result);
+		}
+
+		TEST_METHOD(postfix_test4)
+		{
+			std::string expression = "((sin(1)/cos(1))*atan(sqrt(3)))/(pi/3)";
+			std::string helper = "";
+			std::string result = "1sin1cos/3sqrtatan*pi3//";
 			size_t i = 0;
 
 			calc.add(expression);
