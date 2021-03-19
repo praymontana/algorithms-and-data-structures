@@ -1,0 +1,100 @@
+#pragma once 
+
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+template <class T, class V>
+class RBT
+{
+public:
+    template <class T, class V>
+    class Node
+    {
+    public:
+
+        T key;								// Node key
+        V value;							// Node element value
+        Node<T, V>* parent;					// Pointer to parent node
+        Node<T, V>* left;					// Pointer to the left child
+        Node<T, V>* right;					// Pointer to the right child
+        char color;							// Node color (red == 'r'; black == 'b')
+
+        Node(T key, V value, Node<T, V>* parent, Node<T, V>* left, Node<T, V>* right)
+        {
+            this->key = key;
+            this->value = value;
+            this->parent = parent;
+            this->left = left;
+            this->right = right;
+            this->color = 'r';
+        }
+
+        T get_key() {
+            return this->key;
+        }
+
+        V get_value() {
+            return this->value;
+        }
+    };
+
+    RBT()
+    {
+        Nil = new Node<T, V>(T(), V(), NULL, NULL, NULL);
+        Nil->color = 'b';
+        Root = Nil;
+    }
+
+    // Number of nodes
+    size_t count = 0;
+
+    // Balancing the tree using the algorithm of left rotation
+    void left_rotate(Node<T, V>* x_node);
+
+    // Balancing the tree using the algorithm of right rotation
+    void right_rotate(Node<T, V>* x_node);
+
+    // Balancing the tree after the inserting
+    void insert_fix(Node<T, V>* newest);
+
+    // Adding an element to the tree by key and value
+    void insert(T key, V value);
+
+    // Replacing nodes for balancing 
+    void transplant(Node<T, V>* first, Node<T, V>* second);
+
+    // Finding the minimal value
+    Node<T, V>* minimum(Node<T, V>* node);
+
+    // Balancing the tree after the deleting
+    void delete_fix(Node<T, V>* fixed);
+
+    // Deleting a tree element by key
+    void remove(T key);
+
+    // Finding an element by key
+    Node<T, V>* find(T key);
+
+    // Recursive part of cleaning the tree
+    void clean(Node<T, V>* current);
+
+    // Cleaning the memory after working with the tree
+    void clear();
+
+    // Recursive part of printing the tree
+    void print_tree(Node<T, V>* root, size_t choice);
+
+    // Printing the tree (1st choice), keys (get_keys, 2nd choice), values (get_values, 3rd choice) 
+    void print(size_t choice);
+
+    // Returning the root's pointer 
+    Node<T, V>* get_root();
+
+private:
+    Node<T, V>* Root;						// Red-black tree root node
+    Node<T, V>* Nil;						// Fictitious leaf
+};
+
+#include "Realization.cpp"
