@@ -1,100 +1,415 @@
-#pragma once 
-
 #include <iostream>
 #include <stdexcept>
-#include <string>
 #include <vector>
+#include "Prototypes.h" 
+
+using namespace std;
 
 template <class T, class V>
-class RBT
+void RBT<T, V>::left_rotate(Node<T, V>* x_node)
 {
-public:
-    template <class T, class V>
-    class Node
-    {
-    public:
+    Node<T, V>* y_node = x_node->right;                 // The right child of called node
+    x_node->right = y_node->left;
 
-        T key;								// Node key
-        V value;							// Node element value
-        Node<T, V>* parent;					// Pointer to parent node
-        Node<T, V>* left;					// Pointer to the left child
-        Node<T, V>* right;					// Pointer to the right child
-        char color;							// Node color (red == 'r'; black == 'b')
+    if (y_node->left != this->Nil)
+        y_node->left->parent = x_node;
 
-        Node(T key, V value, Node<T, V>* parent, Node<T, V>* left, Node<T, V>* right)
+    y_node->parent = x_node->parent;
+    if (x_node->parent == this->Nil)
+        this->Root = y_node;
+    else if (x_node->parent->left)
+        x_node->parent->left = y_node;
+    else
+        x_node->parent->right = y_node;
+
+    y_node->left = x_node;
+    x_node->parent = y_node;
+}
+
+template <class T, class V>
+void RBT<T, V>::right_rotate(Node<T, V>* x_node)
+{
+    Node<T, V>* y_node = x_node->left;                  // The left child of called node
+    x_node->left = y_node->right;
+
+    if (y_node->right != this->Nil)
+        y_node->right->parent = x_node;
+
+    y_node->parent = x_node->parent;
+    if (x_node->parent == this->Nil)
+        this->Root = y_node;
+    else if (x_node->parent->right)
+        x_node->parent->right = y_node;
+    else
+        x_node->parent->left = y_node;
+
+    y_node->right = x_node;
+    x_node->parent = y_node;
+}
+
+template <class T, class V>
+void RBT<T, V>::insert_fix(Node<T, V>* newest)
+{
+    Node<T, V>* y_node;                                 // grand uncle of called node
+
+    while (newest->parent->color == 'r') {
+
+        if (newest->parent == newest->parent->parent->right)
         {
-            this->key = key;
-            this->value = value;
-            this->parent = parent;
-            this->left = left;
-            this->right = right;
-            this->color = 'r';
+            y_node = newest->parent->parent->left;
+            if (y_node->color == 'r')
+            {
+                newest->parent->color = 'b';
+                y_node->color = 'b';
+                newest->parent->parent->color = 'r';
+                newest = newest->parent->parent;
+            }
+            else
+            {
+                if (newest == newest->parent->left)
+                {
+                    newest = newest->parent;
+                    right_rotate(newest);
+                }
+                newest->parent->color = 'b';
+                newest->parent->parent->color = 'r';
+                left_rotate(newest->parent->parent);
+            }
         }
-
-        T get_key() {
-            return this->key;
+        else
+        {
+            y_node = newest->parent->parent->right;
+            if (y_node->color == 'r')
+            {
+                newest->parent->color = 'b';
+                y_node->color = 'b';
+                newest->parent->parent->color = 'r';
+                newest = newest->parent->parent;
+            }
+            else
+            {
+                if (newest == newest->parent->right)
+                {
+                    newest = newest->parent;
+                    left_rotate(newest);
+                }
+                newest->parent->color = 'b';
+                newest->parent->parent->color = 'r';
+                right_rotate(newest->parent->parent);
+            }
         }
-
-        V get_value() {
-            return this->value;
+        if (newest == this->Root)
+        {
+            break;
         }
-    };
-
-    RBT()
-    {
-        Nil = new Node<T, V>(T(), V(), NULL, NULL, NULL);
-        Nil->color = 'b';
-        Root = Nil;
     }
+    this->Root->color = 'b';
+}
 
-    // Number of nodes
-    size_t count = 0;
+template <class T, class V>
+void RBT<T, V>::insert(T new_key, V new_value)
+{
+    Node<T, V>* x_node = this->Root;                    // Pointer to the root
+    Node<T, V>* y_node = this->Nil;                             // Pointer to the leaf
+    Node<T, V>* z_node = new Node<T, V>(new_key, new_value, y_node, Nil, Nil);      // New node
 
-    // Balancing the tree using the algorithm of left rotation
-    void left_rotate(Node<T, V>* x_node);
+    while (x_node != this->Nil)
+    {
+        y_node = x_node;
+        if (z_node->key < x_node->key)
+        {
+            x_node = x_node->left;
+        }
+        else
+        {
+            x_node = x_node->right;
+        }
+    }
+    z_node->parent = y_node;
 
-    // Balancing the tree using the algorithm of right rotation
-    void right_rotate(Node<T, V>* x_node);
+    if (y_node == this->Nil)
+    {
+        this->Root = z_node;
+        z_node->color = 'b';
+        insert_fix(z_node);
+    }
+    else if (z_node->key < y_node->key)
+    {
+        y_node->left = z_node;
+        insert_fix(z_node);
+    }
+    else
+    {
+        y_node->right = z_node;
+        insert_fix(z_node);
+    }
+    this->count++;
+}
 
-    // Balancing the tree after the inserting
-    void insert_fix(Node<T, V>* newest);
+template <class T, class V>
+void  RBT<T, V>::transplant(Node<T, V>* first, Node<T, V>* second)
+{
+    if (first->parent == this->Nil)
+        this->Root = second;
 
-    // Adding an element to the tree by key and value
-    void insert(T key, V value);
+    else if (first == first->parent->left)
+        first->parent->left = second;
 
-    // Replacing nodes for balancing 
-    void transplant(Node<T, V>* first, Node<T, V>* second);
+    else
+        first->parent->right = second;
+    second->parent = first->parent;
+}
 
-    // Finding the minimal value
-    Node<T, V>* minimum(Node<T, V>* node);
+template <class T, class V>
+RBT<T, V>::Node<T, V>* RBT<T, V>::minimum(Node<T, V>* node)
+{
+    while (node->left != this->Nil)
+        node = node->left;
+    return node;
+}
 
-    // Balancing the tree after the deleting
-    void delete_fix(Node<T, V>* fixed);
+template <class T, class V>
+void RBT<T, V>::delete_fix(Node<T, V>* fixed)
+{
+    Node<T, V>* helper;                                 // Helping node (From the start -- pointer to the node's uncle)
 
-    // Deleting a tree element by key
-    void remove(T key);
+    while ((fixed != this->Root) && (fixed->color == 'b'))
+    {
+        if (fixed == fixed->parent->left)
+        {
+            helper = fixed->parent->right;
+            if (helper->color == 'r')
+            {
+                helper->color = 'b';
+                fixed->parent->color = 'r';
+                left_rotate(fixed->parent);
+                helper = fixed->parent->right;
+            }
+            if ((helper->left->color == 'b') && (helper->right->color == 'b'))
+            {
+                helper->color = 'r';
+                fixed = fixed->parent;
+            }
+            else
+            {
+                if (helper->right->color == 'b')
+                {
+                    helper->left->color = 'b';
+                    helper->color = 'r';
+                    right_rotate(helper);
+                    helper = fixed->parent->right;
+                }
 
-    // Finding an element by key
-    Node<T, V>* find(T key);
+                helper->color = fixed->parent->color;
+                fixed->parent->color = 'b';
+                helper->right->color = 'b';
+                left_rotate(fixed->parent);
+                fixed = this->Root;
+            }
+        }
+        else
+        {
+            helper = fixed->parent->left;
+            if (helper->color == 'r')
+            {
+                helper->color = 'b';
+                fixed->parent->color = 'r';
+                right_rotate(fixed->parent);
+                helper = fixed->parent->left;
+            }
+            if ((helper->right->color == 'b') && (helper->left->color == 'b'))
+            {
+                helper->color = 'r';
+                fixed = fixed->parent;
+            }
+            else
+            {
+                if (helper->left->color == 'b')
+                {
+                    helper->right->color = 'b';
+                    helper->color = 'r';
+                    left_rotate(helper);
+                    helper = fixed->parent->left;
+                }
 
-    // Recursive part of cleaning the tree
-    void clean(Node<T, V>* current);
+                helper->color = fixed->parent->color;
+                fixed->parent->color = 'b';
+                helper->left->color = 'b';
+                right_rotate(fixed->parent);
+                fixed = this->Root;
+            }
+        }
+    }
+    fixed->color = 'b';
+}
 
-    // Cleaning the memory after working with the tree
-    void clear();
+template <class T, class V>
+void RBT<T, V>::remove(T del_key)
+{
+    Node<T, V>* z_node = find(del_key);                 // Deleting node 
 
-    // Recursive part of printing the tree
-    void print_tree(Node<T, V>* root, size_t choice);
+    if (z_node == NULL)
+        throw out_of_range("The key doesn't exist");
 
-    // Printing the tree (1st choice), keys (get_keys, 2nd choice), values (get_values, 3rd choice) 
-    void print(size_t choice);
+    Node<T, V>* y_node = z_node;                        // Helping node
+    char y_color = y_node->color;                       // Color of the helping node
+    Node<T, V>* x_node;                                 // Substitude node
 
-    // Returning the root's pointer 
-    Node<T, V>* get_root();
+    if (z_node->left == this->Nil)
+    {
+        x_node = z_node->right;
+        transplant(z_node, z_node->right);
+    }
+    else if (z_node->right == this->Nil)
+    {
+        x_node = z_node->left;
+        transplant(z_node, z_node->left);
+    }
+    else
+    {
+        y_node = minimum(y_node->right);
+        y_color = y_node->color;
+        x_node = y_node->right;
 
-private:
-    Node<T, V>* Root;						// Red-black tree root node
-    Node<T, V>* Nil;						// Fictitious leaf
-};
+        if (y_node->parent == z_node)
+            x_node->parent = y_node;
+        else
+        {
+            transplant(y_node, y_node->right);
+            y_node->right = z_node->right;
+            y_node->right->parent = y_node;
+        }
+        transplant(y_node->right, y_node);
+        y_node->left = z_node->left;
+        y_node->left->parent = y_node;
+        y_node->color = z_node->color;
+    }
+    delete z_node;
+    if (y_color == 'b')
+        delete_fix(x_node);
+    this->count--;
+}
 
-#include "Realization.cpp"
+template <class T, class V>
+RBT<T, V>::Node<T, V>* RBT<T, V>::find(T key)
+{
+    Node<T, V>* current = this->Root;                  // Pointer to the current node for finding
+    bool flag = false;                                 // Flag that checks if the node was found
+    while ((current) && (flag == false))
+    {
+        // If current value is bigger or smaller than the needed one, we move next
+        if (current->key > key)
+            current = current->left;
+
+        else if (current->key < key)
+            current = current->right;
+
+        // If current value is equal the needed one, the loop stops, the value returns
+        else
+        {
+            flag = true;
+            return current;
+        }
+    }
+    // If the value isn't found, the code returns NULL
+    return NULL;
+}
+
+template <class T, class V>
+void RBT<T, V>::clean(Node<T, V>* current)
+{
+    if (current->left != this->Nil)
+        clean(current->left);
+    if (current->right != this->Nil)
+        clean(current->right);
+
+    delete current;
+}
+
+template <class T, class V>
+void RBT<T, V>::clear()
+{
+    if (this->Root == NULL)
+        throw out_of_range("The tree is empty already!");
+
+    if (this->Root != this->Nil)
+    {
+        clean(this->Root);
+        this->Root = this->Nil;
+    }
+}
+
+
+template <class T, class V>
+void RBT<T, V>::get_keys(Node<T, V>* root, std::vector<T>* vec)
+{
+    if (root != this->Nil)
+    {
+        vec->push_back(root->key);
+        get_keys(root->left, vec);
+        get_keys(root->right, vec);
+    }
+}
+
+template <class T, class V>
+std::vector<T>* RBT<T, V>::call_keys()
+{
+    if (this->Root != this->Nil)
+    {
+        std::vector<T>* key_arr = new std::vector<T>();
+        get_keys(this->Root, key_arr);
+        return key_arr;
+    }
+    else throw out_of_range("The tree is empty!");
+}
+
+template <class T, class V>
+void RBT<T, V>::get_values(Node<T, V>* root, std::vector<T>* vec)
+{
+    if (root != this->Nil)
+    {
+        vec->push_back(root->value);
+        get_values(root->left, vec);
+        get_values(root->right, vec);
+    }
+}
+
+template <class T, class V>
+std::vector<T>* RBT<T, V>::call_vals()
+{
+    if (this->Root != this->Nil)
+    {
+        std::vector<T>* val_arr = new std::vector<T>();
+        get_values(this->Root, val_arr);
+        return val_arr;
+    }
+    else throw out_of_range("The tree is empty!");
+}
+
+
+template <class T, class V>
+void RBT<T, V>::print_tree(Node<T, V>* root)
+{
+    if (root != this->Nil)
+    {
+        cout << root->key << " (" << root->color << ") => " << root->value << endl;
+        print_tree(root->left);
+        print_tree(root->right);
+    }
+}
+
+template <class T, class V>
+void RBT<T, V>::print()
+{
+    if (this->Root != this->Nil)
+    {
+        print_tree(this->Root);
+    }
+    else throw out_of_range("The tree is empty!");
+}
+
+template <class T, class V>
+RBT<T, V>::Node<T, V>* RBT<T, V>::get_root()
+{
+    return this->Root;
+}
