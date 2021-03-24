@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 template <class T, class V>
 class RBT
@@ -49,6 +48,7 @@ public:
 
     // Number of nodes
     size_t count = 0;
+    size_t current_index = 0;
 
     // Balancing the tree using the algorithm of left rotation
     void left_rotate(Node<T, V>* x_node);
@@ -84,16 +84,16 @@ public:
     void clear();
 
     // Function that fills the vector with get_keys
-    std::vector<T>* call_keys();
+    T* call_keys();
 
     // Function that fills the vector with get_values
-    std::vector<T>* call_vals();
+    V* call_vals();
 
     // Recursive part of getting keys
-    void get_keys(Node<T, V>* root, std::vector<T>* vec);
+    void get_keys(Node<T, V>* root, T* vec);
 
     // Recursive part of getting values
-    void get_values(Node<T, V>* root, std::vector<T>* vec);
+    void get_values(Node<T, V>* root, V* vec);
 
     // Recursive part of printing the tree
     void print_tree(Node<T, V>* root);
