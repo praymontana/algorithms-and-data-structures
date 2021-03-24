@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdexcept>
-#include <vector>
-#include "Prototypes.h" 
+#include "Header.h" 
 
 using namespace std;
 
@@ -341,22 +340,23 @@ void RBT<T, V>::clear()
 
 
 template <class T, class V>
-void RBT<T, V>::get_keys(Node<T, V>* root, std::vector<T>* vec)
+void RBT<T, V>::get_keys(Node<T, V>* root, T* vec)
 {
     if (root != this->Nil)
     {
-        vec->push_back(root->key);
+        vec[current_index++] = root->key;
         get_keys(root->left, vec);
         get_keys(root->right, vec);
     }
 }
 
 template <class T, class V>
-std::vector<T>* RBT<T, V>::call_keys()
+T* RBT<T, V>::call_keys()
 {
     if (this->Root != this->Nil)
     {
-        std::vector<T>* key_arr = new std::vector<T>();
+        T* key_arr = new T[this->count];
+        current_index = 0;
         get_keys(this->Root, key_arr);
         return key_arr;
     }
@@ -364,22 +364,23 @@ std::vector<T>* RBT<T, V>::call_keys()
 }
 
 template <class T, class V>
-void RBT<T, V>::get_values(Node<T, V>* root, std::vector<T>* vec)
+void RBT<T, V>::get_values(Node<T, V>* root, V* vec)
 {
     if (root != this->Nil)
     {
-        vec->push_back(root->value);
+        vec[current_index++] = root->value;
         get_values(root->left, vec);
         get_values(root->right, vec);
     }
 }
 
 template <class T, class V>
-std::vector<T>* RBT<T, V>::call_vals()
+V* RBT<T, V>::call_vals()
 {
     if (this->Root != this->Nil)
     {
-        std::vector<T>* val_arr = new std::vector<T>();
+        V* val_arr = new V[this->count];
+        current_index = 0;
         get_values(this->Root, val_arr);
         return val_arr;
     }
