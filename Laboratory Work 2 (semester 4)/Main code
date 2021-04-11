@@ -1,0 +1,33 @@
+#include <iostream>
+#include <string>
+#include "Header.h"
+
+using namespace std;
+
+int main()
+{
+    HUFF* code = new HUFF();
+
+    std::string data;
+
+    try
+    {
+        code->read_from_console("it is test string");
+
+        code->coding();
+        cout << "List of coded letters:" << endl;
+        code->print_code(code->get_root());
+
+        cout << "\nCoded phrase: " << endl;
+        data = code->coder();
+
+        cout << "\nDecoded phrase: " << endl;
+        code->decoder(data);
+    }
+    catch (out_of_range e)
+    {
+        cerr << e.what() << endl;
+    }
+
+    delete code;
+}
