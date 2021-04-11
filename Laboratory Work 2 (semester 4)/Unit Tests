@@ -1,0 +1,168 @@
+#include "CppUnitTest.h"
+#include "../Huffman/Header.h"
+
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace std;
+
+namespace UnitTest1
+{
+	TEST_CLASS(UnitTest1)
+	{
+	public:
+		
+		TEST_METHOD(empty_1)
+		{
+            HUFF* code = new HUFF();
+            std::string data;
+
+            try
+            {
+                code->read_from_file("data1.txt");
+            }
+            catch (out_of_range e)
+            {
+                Assert::AreEqual("There was a problem with opening the file. Check it and try again.", e.what());
+            }
+
+            delete code;
+		}
+
+        TEST_METHOD(empty_2)
+        {
+            HUFF* code = new HUFF();
+            std::string data;
+
+            try
+            {
+                code->coding();
+            }
+            catch (out_of_range e)
+            {
+                Assert::AreEqual("The list is empty. Fill it first.", e.what());
+            }
+
+            delete code;
+        }
+
+        TEST_METHOD(empty_3)
+        {
+            HUFF* code = new HUFF();
+            std::string data;
+
+            try
+            {
+                code->print_code(code->get_root());
+            }
+            catch (out_of_range e)
+            {
+                Assert::AreEqual("The tree is empty!", e.what());
+            }
+
+            delete code;
+        }
+
+        TEST_METHOD(empty_4)
+        {
+            List* lst = new List();
+            std::string data;
+
+            try
+            {
+                lst->find("a");
+            }
+            catch (out_of_range e)
+            {
+                Assert::AreEqual("The list is empty.", e.what());
+            }
+
+            delete lst;
+        }
+
+        TEST_METHOD(empty_5)
+        {
+            HUFF* code = new HUFF();
+            std::string data = "";
+
+            try
+            {
+                code->read_from_console(data);
+            }
+            catch (out_of_range e)
+            {
+                Assert::AreEqual("There was a problem with reading the entered string. Check it and try again.", e.what());
+            }
+
+            delete code;
+        }
+
+
+        TEST_METHOD(exists_1)
+        {
+            HUFF* code = new HUFF();
+            std::string data = "If you hear an inner voice that tells you, \"You cannot draw,\" draw by all means, and this voice will one day be silent.";
+            code->read_from_file("C:\\data2.txt");
+            std::string res = code->get_set();
+
+            Assert::AreEqual(data, res);
+        
+            delete code;
+        }
+
+        TEST_METHOD(exists_2)
+        {
+            HUFF* code = new HUFF();
+            std::string data = "If you hear an inner voice that tells you, \"You cannot draw,\" draw by all means, and this voice will one day be silent.";
+            code->read_from_console(data);
+            std::string res = code->get_set();
+
+            Assert::AreEqual(data, res);
+
+            delete code;
+        }
+
+        TEST_METHOD(codes_1)
+        {
+            HUFF* code = new HUFF();
+            std::string data = "The sadness will last forever.";
+            code->read_from_console(data);
+            std::string res;
+            code->coding();
+            res = code->coder();
+            res = code->decoder(res);
+
+            Assert::AreEqual(data, res);
+
+            delete code;
+        }
+
+        TEST_METHOD(codes_2)
+        {
+            HUFF* code = new HUFF();
+            std::string data = "Everything for you is sunrises and fogs.";
+            code->read_from_console(data);
+            std::string res;
+            code->coding();
+            res = code->coder();
+            res = code->decoder(res);
+
+            Assert::AreEqual(data, res);
+
+            delete code;
+        }
+
+        TEST_METHOD(codes_3)
+        {
+            HUFF* code = new HUFF();
+            std::string data = "Write and sing songs that you will not be ashamed of.";
+            code->read_from_console(data);
+            std::string res;
+            code->coding();
+            res = code->coder();
+            res = code->decoder(res);
+
+            Assert::AreEqual(data, res);
+
+            delete code;
+        }
+	};
+}
