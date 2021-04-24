@@ -1,0 +1,126 @@
+#include <fstream>
+#include <string>
+#include "Graph.h"
+#include "List.h"
+
+using namespace std;
+
+Graph::Graph()
+{
+    this->matrix = NULL;
+    this->distance = NULL;
+    this->size = 0;
+    this->top = 0;
+    this->all_tops = NULL;
+}
+
+Graph::~Graph()
+{
+    delete[] distance;
+
+    for (size_t i = 0; i < size; i++)
+        delete this->matrix[i];
+
+    delete this->matrix;
+}
+
+size_t Graph::get_index(string name)
+{
+    for (size_t i = 0; i < size; i++)
+        if (all_tops[i] == name)
+            return i;
+
+    throw out_of_range("The vertex doesn't exist");
+}
+
+void Graph::read_from_file(string name)
+{
+    ifstream file;							// Pointer to the file
+    string helper[4];                       // Helping string for reading
+    size_t i, j;							// Loop parameter
+
+    file.open(name);
+    if (file.is_open())
+    {
+        file >> size;
+        file.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        all_tops = new string[size];
+        distance = new size_t[size];
+        // Creating matrix of values
+        matrix = new int* [size];
+        for (size_t i = 0; i < size; i++)
+        {
+            matrix[i] = new int[size];
+            for (size_t j = 0; j < size; j++)
+                matrix[i][j] = numeric_limits<int>::max();
+
+            matrix[i][i] = 0;
+        }
+
+        size_t array_index = 0;
+
+        while (file.peek() != EOF)
+        {
+            getline(file, helper[0], ';');
+            getline(file, helper[1], ';');
+            getline(file, helper[2], ';');
+            getline(file, helper[3], '\n');
+
+
+            for (j = 0; j < 2; j++)
+            {
+                try
+                {
+                    get_index(helper[j]);
+                }
+                catch (out_of_range)
+                {
+                    all_tops[array_index++] = helper[j];
+                }
+            }
+
+            if (helper[2] != "N/A")
+                matrix[get_index(helper[0])][get_index(helper[1])] = stoi(helper[2]);
+
+            if (helper[3] != "N/A")
+                matrix[get_index(helper[1])][get_index(helper[0])] = stoi(helper[3]);
+        }
+    }
+    else
+        throw out_of_range("There was a problem with opening the file!");
+}
+
+void Graph::print_tops() 
+{
+    for (size_t i = 0; i < size; i++)
+        cout << i << ") " << all_tops[i] << endl;
+}
+
+void Graph::choice(size_t ans)
+{
+    top = ans;
+}
+
+void Graph::search(size_t* result)
+{
+    size_t i, j, k;
+
+    for (i = 0; i < size; i++)
+        distance[i] = matrix[top][i];
+
+    for (i = 0; i < size - 1; i++)
+        for (j = 0; j < size; j++)
+            if (distance[j] != numeric_limits<int>::max())
+                for (k = 0; k < size; k++)
+                    if ((k != top) && (k != j) && (matrix[j][k] != numeric_limits<int>::max()))
+                        if (distance[k] > distance[j] + matrix[j][k])
+                            distance[k] = distance[j] + matrix[j][k];
+
+    // Detail made just for unit test
+    for (size_t i = 0; i < size; i++)
+        result[i] = distance[i];
+
+    for (size_t i = 0; i < size; i++)
+        cout << "The shortest flight from " << all_tops[top] << " to " << all_tops[i] << " is " << distance[i] << endl;
+}
