@@ -1,0 +1,38 @@
+#pragma once
+#include <iostream>
+
+using namespace std;
+
+class Graph
+{
+private:
+
+    string* all_tops;                           // Array of tops' names
+    int** matrix;					            // Matrix of weights
+    size_t* distance;						    // Array of distances between tops
+    size_t size;							    // Number of tops
+    size_t top;								    // A start top for graph
+
+    // Get top's index for working with distances
+    size_t get_index(string name);
+
+public:
+
+    // Costructor
+    Graph();
+
+    // Destructor
+    ~Graph();
+
+    // Function that reads information from entered file
+    void read_from_file(string name);
+
+    // Function that helps eith choosing the needed top
+    void print_tops();
+
+    // Function that initialize chosen top
+    void choice(size_t ans);
+
+    // Function that finds all distances from chosen top
+    void search(size_t* result);
+};
