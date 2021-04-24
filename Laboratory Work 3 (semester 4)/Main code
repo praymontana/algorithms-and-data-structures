@@ -1,0 +1,34 @@
+#include <iostream>
+#include <string>
+#include <stdexcept>
+#include "Graph.h"
+
+using namespace std;
+
+int main()
+{
+    Graph* graph = nullptr;                                             // Object of class Graph
+    size_t* result = new size_t;                                        // Resulting array
+
+    try
+    {
+        graph = new Graph;
+
+        graph->read_from_file("data.txt");
+        cout << "Data read was completed successfully!" << endl;
+
+        size_t ans = 0;                                                 // User's choice
+        cout << "Choose the city you go from: " << endl;
+        graph->print_tops();
+
+        cin >> ans;
+        graph->choice(ans);
+
+        graph->search(result);
+    }
+    catch (domain_error e)
+    {
+        cerr << e.what() << endl;
+    }
+    return 0;
+}
