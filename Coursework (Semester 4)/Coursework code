@@ -1,0 +1,182 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace EdmondsKarp
+{
+    public class EdmondsKarp
+    {
+        // public for unit tests
+        /*public*/ List<string> allTops;                                                       // List of tops
+        /*public*/ List<List<Graph>> Edges;                                                   // List of edges
+
+        /// <summary>
+        /// Class describing the graph
+        /// </summary>
+        public class Graph
+        {
+            public string s, t;                                                     // Source and trim
+            public int
+                rev,                                                                // Reverse edge
+                capacity,                                                           // Capacity parameter
+                flow;                                                               // Flow parameter
+
+            /// <summary>
+            /// Graph's constructor
+            /// </summary>
+            /// <param name="source"></param>
+            /// <param name="trim"></param>
+            /// <param name="reverse Graph"></param>
+            /// <param name="capacity"></param>
+            public Graph(string s, string t, int rev, int capacity)
+            {
+                this.s = s;
+                this.t = t;
+                this.rev = rev;
+                this.capacity = capacity;
+            }
+        }
+
+        /// <summary>
+        /// Constructor of helping lists
+        /// </summary>
+        public EdmondsKarp()
+        {
+            allTops = new List<string>();
+            Edges = new List<List<Graph>>();
+        }
+
+        /// <summary>
+        /// Function that fills the graph using the read data
+        /// </summary>
+        /// <param name="input"></param>
+        public void FillGraph(string[] input)
+        {
+            for (uint i = 0; i < 2; i++)
+                if (!allTops.Contains(input[i]))
+                {
+                    allTops.Add(input[i]);
+                    Edges.Add(new List<Graph>());
+                }
+
+            Edges[allTops.IndexOf(input[0])].Add(new Graph(input[0], input[1], Edges[allTops.IndexOf(input[1])].Count, int.Parse(input[2])));
+            Edges[allTops.IndexOf(input[1])].Add(new Graph(input[1], input[0], Edges[allTops.IndexOf(input[0])].Count - 1, 0));
+        }
+
+        /// <summary>
+        /// Function that reads the entering data from console
+        /// </summary>
+        public void ReadFromConsole(uint number = 0)
+        {
+            string[] input;
+
+            if (number <= 0)
+                throw new IndexOutOfRangeException();
+
+            Console.WriteLine("Now please enter all connections between graph's tops in format \"S Q 2\" ");
+            for (uint i = 0; i < number; i++)
+            {
+                input = Console.ReadLine().Split(' ');
+                FillGraph(input);
+            }
+        }
+
+        /// <summary>
+        /// Function that reads the entering data from file
+        /// </summary>
+        public void ReadFromFile(string filename)
+        {
+            try
+            {
+                StreamReader file = new StreamReader(@filename);
+
+                while (file.Peek() != -1)
+                {
+                    string[] data = file.ReadLine().Split(' ');
+                    FillGraph(data);
+                }
+                Console.WriteLine("Data reading completed successfully!");
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Function that finds max flow between two tops using Esmonds Karp algorithm
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="trim"></param>
+        /// <returns></returns>
+        public int MaxFlow(string source, string trim)
+        {
+            Queue<string> tops = new Queue<string>();               // Queue of tops
+            Graph[] prev = new Graph[Edges.Count];                 // Array of tops' parents
+            int result = 0;                                         // The resulting flow
+
+            while (true)
+            {
+
+                // First, we put the source in the queue
+                tops.Enqueue(source);
+                while ((prev[allTops.IndexOf(trim)] == null) && (tops.Count != 0))
+                {
+                    string newTop = tops.Dequeue();
+
+                    foreach (Graph graph in Edges[allTops.IndexOf(newTop)])
+                        if ((prev[allTops.IndexOf(graph.t)] == null) && (graph.capacity > graph.flow))
+                        {
+                            prev[allTops.IndexOf(graph.t)] = graph;
+                            tops.Enqueue(graph.t);
+                        }
+                }
+
+                if (prev[allTops.IndexOf(trim)] == null)
+                    break;
+
+                int flow = int.MaxValue;
+                // Finding a minimal flow
+                for (int index = allTops.IndexOf(trim); index != allTops.IndexOf(source); index = allTops.IndexOf(prev[index].s))
+                    flow = Math.Min(flow, prev[index].capacity - prev[index].flow);
+
+                // Updating graph's values
+                for (int index = allTops.IndexOf(trim); index != allTops.IndexOf(source); index = allTops.IndexOf(prev[index].s))
+                {
+                    prev[index].flow += flow;
+                    Edges[allTops.IndexOf(prev[index].t)][prev[index].rev].flow -= flow;
+                }
+
+                // Clearing values foe finding another flow
+                tops.Clear();
+                for (int i = 0; i < prev.Length; i++)
+                    prev[i] = null;
+
+                result += flow;
+            }
+
+            return result;
+        }
+
+        // Usage example
+        public static void Main()
+        {
+            EdmondsKarp graph = new EdmondsKarp();
+
+            try
+            {
+              //  Console.WriteLine("Enter the number of graph's edges -- ");
+              //  uint number = uint.Parse(Console.ReadLine());               // Number of graph's edges
+                graph.ReadFromFile("C:/data1.txt");
+
+                Console.Write("\nThe maximal flow in the graph is ");
+                Console.Write(graph.MaxFlow("S", "T"));
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+    }
+}
