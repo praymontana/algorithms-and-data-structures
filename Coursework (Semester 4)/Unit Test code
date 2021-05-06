@@ -1,0 +1,123 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
+using System.Collections.Generic;
+using EdmondsKarp;
+
+namespace UnitTestProject1
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        /// <summary>
+        /// Test that checks program's reaction to try to read a nonexistent file
+        /// </summary>
+        [TestMethod]
+        public void NoFile()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            string Expected = "Could not find file \'C:\\data3.txt\'";
+            try
+            {
+                test.ReadFromFile("C:/data3.txt");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(Expected, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Test that checks program's reaction to try to read a graph from console without edges
+        /// </summary>
+        [TestMethod]
+        public void NoConsole()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            string Expected = "Index was outside the bounds of the array.";
+            try
+            {
+                test.ReadFromConsole();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(Expected, e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CorrectCount1()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data1.txt");
+
+            Assert.AreEqual(test.allTops.Count, 6);
+        }
+
+        [TestMethod]
+        public void CorrectCount2()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data4.txt");
+
+            Assert.AreEqual(test.allTops.Count, 8);
+        }
+
+        [TestMethod]
+        public void CorrectCount3()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data1.txt");
+
+            Assert.AreEqual(test.Edges.Count, 6);
+        }
+
+        [TestMethod]
+        public void CorrectCount4()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data4.txt");
+
+            Assert.AreEqual(test.Edges.Count, 8);
+        }
+
+        /// <summary>
+        /// Test that uses data from coursework's task
+        /// </summary>
+        [TestMethod]
+        public void CorrectFlow1()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data1.txt");
+
+            Assert.AreEqual(test.MaxFlow("S", "T"), 5);
+        }
+
+        [TestMethod]
+        public void CorrectFlow2()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data2.txt");
+
+            Assert.AreEqual(test.MaxFlow("S", "T"), 7);
+        }
+
+        [TestMethod]
+        public void CorrectFlow3()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data4.txt");
+
+            Assert.AreEqual(test.MaxFlow("S", "T"), 55);
+        }
+
+        [TestMethod]
+        public void CorrectFlow4()
+        {
+            EdmondsKarp.EdmondsKarp test = new();
+            test.ReadFromFile("C:/data5.txt");
+
+            Assert.AreEqual(test.MaxFlow("S", "T"), 60);
+        }
+    }
+}
